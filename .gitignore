@@ -1,9 +1,2 @@
-node_modules/
-.capacitor/
-android/
-www/
-.idea/
-*.apk
-*.aab
 .DS_Store
 Thumbs.db
