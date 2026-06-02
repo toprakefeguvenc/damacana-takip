@@ -1,0 +1,14 @@
+{
+  "name": "damacana-takip",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "npx cap sync",
+    "android": "npx cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.4.0",
+    "@capacitor/cli": "^8.4.0",
+    "@capacitor/core": "^8.4.0"
+  }
+}
