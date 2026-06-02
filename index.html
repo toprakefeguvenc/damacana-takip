@@ -40,8 +40,8 @@ body{font-family:var(--fnt);background:var(--bg);color:var(--txt);min-height:100
 
 /* Bottom Nav */
 .bnav{position:fixed;bottom:0;left:0;right:0;height:var(--bn);z-index:50;background:var(--srf);border-top:1px solid var(--brd);display:flex;align-items:stretch;padding:6px 8px env(safe-area-inset-bottom,8px);gap:4px}
-.bnav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--txt3);text-decoration:none;font-size:.58rem;font-weight:600;transition:all .2s ease;cursor:pointer;letter-spacing:.1px;border:0;background:none;font-family:var(--fnt);border-radius:14px;position:relative;padding:4px 0}
-.bnav a svg{width:24px;height:24px;transition:all .25s ease}
+.bnav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--txt3);text-decoration:none;font-size:.5rem;font-weight:600;transition:all .2s ease;cursor:pointer;letter-spacing:.1px;border:0;background:none;font-family:var(--fnt);border-radius:10px;position:relative;padding:4px 0}
+.bnav a svg{width:21px;height:21px;transition:all .25s ease}
 .bnav a.act{color:var(--prm);background:var(--prmg)}
 .bnav a.act svg{color:var(--prm);transform:translateY(-1px) scale(1.05);filter:drop-shadow(0 1px 3px rgba(13,148,136,.3))}
 
@@ -309,6 +309,10 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
   <a data-v="history" onclick="swV('history')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
     <span>Geçmiş</span>
+  </a>
+  <a data-v="settings" onclick="swV('settings')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    <span>Ayarlar</span>
   </a>
 </nav>
 
