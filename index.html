@@ -154,6 +154,15 @@ td .acts button:active{background:var(--prmg);color:var(--prm);transform:scale(.
 .syncd.er{background:var(--scl)}
 @keyframes pls{0%,100%{opacity:1}50%{opacity:.3}}
 
+/* Filter Bar */
+.fltr{display:flex;gap:10px;align-items:flex-end;margin-bottom:14px;padding:14px 16px;background:var(--srf);border:1px solid var(--brd);border-radius:var(--rads);box-shadow:var(--shw)}
+.fltr .fltr-g{flex:1;min-width:0}
+.fltr .fltr-g label{display:block;font-size:.65rem;font-weight:700;color:var(--txt3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.fltr .fltr-g input{width:100%;padding:9px 12px;border:1px solid var(--brd);border-radius:8px;font-size:.8rem;font-family:var(--fnt);color:var(--txt);background:var(--srf2);outline:none;-webkit-appearance:none}
+.fltr .fltr-g input:focus{border-color:var(--prm)}
+.fltr .fltr-clr{width:38px;height:38px;border:0;border-radius:10px;background:var(--srf2);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txt3);font-size:.9rem;transition:all .2s;flex-shrink:0}
+.fltr .fltr-clr:active{background:var(--prmg);color:var(--prm);transform:scale(.9)}
+
 /* Touch feedback */
 button,input,select,textarea{font-family:var(--fnt)}
 input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
@@ -261,6 +270,11 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
       <button onclick="App.sa=!App.sa;App.rndH();App.hstBtn()" id="hstBtn">&#9650; Yeni</button>
     </div>
   </div>
+  <div class="fltr" id="hstFltr">
+    <div class="fltr-g"><label>Başlangıç</label><input type="date" id="fltrS" onchange="App.rndH()"></div>
+    <div class="fltr-g"><label>Bitiş</label><input type="date" id="fltrE" onchange="App.rndH()"></div>
+    <button class="fltr-clr" onclick="App.clrFltr()">&#10005;</button>
+  </div>
   <div class="tbl"><div id="hstTable"></div></div>
 </div>
 
@@ -351,7 +365,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 <script>
 const App = {
   prd: { n: { al:70, sa:130, nm:'Nazlı' }, k: { al:100, sa:150, nm:'Kaltun' } },
-  sls: {}, cv: 'dash', md: new Date(), yd: new Date(), sa: false, ed: null,
+  sls: {}, cv: 'dash', md: new Date(), yd: new Date(), sa: false, ed: null, fs: '', fe: '',
   AY: ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'],
   _sg: false,
 
@@ -508,7 +522,11 @@ const App = {
   },
 
   rndH() {
-    const es=Object.entries(this.sls); if(!es.length){document.getElementById('hstTable').innerHTML='<div class="emp"><div class="ei">📋</div><h4>Kayıt yok</h4></div>';return}
+    this.fs=document.getElementById('fltrS').value; this.fe=document.getElementById('fltrE').value
+    let es=Object.entries(this.sls)
+    if (this.fs) es=es.filter(([d])=>d>=this.fs)
+    if (this.fe) es=es.filter(([d])=>d<=this.fe)
+    if(!es.length){document.getElementById('hstTable').innerHTML='<div class="emp"><div class="ei">📋</div><h4>Kayıt yok</h4></div>';this.hstBtn();return}
     es.sort((a,b)=>this.sa?a[0].localeCompare(b[0]):b[0].localeCompare(a[0]))
     let h='<div class="tbl-scrl"><table><thead><tr><th>Tarih</th><th>N</th><th>K</th><th>Top</th><th class="tar">Ciro</th><th class="tar">Kâr</th><th class="tar" style="width:70px"></th></tr></thead><tbody>'
     for(const[d,s]of es){const c=this.cd(d);h+='<tr><td>'+d+'</td><td>'+c.n+'</td><td>'+c.k+'</td><td>'+c.t+'</td><td class="tar">'+fm(c.r)+'</td><td class="tar t-scs">+'+fm(c.p)+'</td><td class="tar"><div class="acts"><button onclick="opEd(\''+d+'\')">&#9998;</button><button onclick="dlSl(\''+d+'\')" style="color:var(--scl)">&#128465;</button></div></td></tr>'}
@@ -516,6 +534,7 @@ const App = {
   },
 
   hstBtn() { document.getElementById('hstBtn').innerHTML = (this.sa?'&#9650; Eski':'&#9650; Yeni')+'→'+(this.sa?'Yeni':'Eski') },
+  clrFltr() { document.getElementById('fltrS').value=''; document.getElementById('fltrE').value=''; this.fs=''; this.fe=''; this.rndH() },
 
   opEd(d) { this.ed=d; const s=this.sls[d]; if(!s)return; document.getElementById('edtDate').value=d; document.getElementById('edtN').value=s.n; document.getElementById('edtK').value=s.k; document.getElementById('editModal').classList.add('show') },
   clEd() { document.getElementById('editModal').classList.remove('show'); this.ed=null },
