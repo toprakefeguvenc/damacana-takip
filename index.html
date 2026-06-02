@@ -169,6 +169,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
     <div><h1>Damacana Takip</h1><span class="hdr-date" id="hdrDate"></span></div>
   </div>
   <div class="hdr-r">
+    <button onclick="swV('settings')" title="Ayarlar">&#9881;</button>
     <button id="syncHdrBtn" onclick="App.showSyncModal()" title="Senkron">&#9729;<span class="syncd off" id="syncDot"></span></button>
     <button onclick="App.toggleTheme()" title="Tema">&#9790;</button>
   </div>
@@ -261,6 +262,28 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
     </div>
   </div>
   <div class="tbl"><div id="hstTable"></div></div>
+</div>
+
+<!-- Settings -->
+<div class="pg" id="pg-settings">
+  <div class="frm">
+    <div class="frm-ttl">&#9881; Fiyat Ayarları</div>
+    <div style="font-size:.78rem;color:var(--txt3);margin-bottom:18px;line-height:1.5">Fiyat değişikliği sadece <strong>yeni satışları</strong> etkiler. Geçmiş kayıtlar kendi fiyatlarıyla hesaplanır.</div>
+    <div class="fg"><label>Nazlı Alış (₺)</label><input type="number" id="setNAl" min="0" step="1"></div>
+    <div class="fg"><label>Nazlı Satış (₺)</label><input type="number" id="setNSa" min="0" step="1"></div>
+    <div class="fg"><label>Kaltun Alış (₺)</label><input type="number" id="setKAl" min="0" step="1"></div>
+    <div class="fg"><label>Kaltun Satış (₺)</label><input type="number" id="setKSa" min="0" step="1"></div>
+    <button class="btn btn-p btn-full" onclick="App.svSet()">&#10003; Fiyatları Kaydet</button>
+  </div>
+  <div class="frm" style="margin-top:14px">
+    <div class="frm-ttl">&#9729; Bulut Senkron</div>
+    <div style="font-size:.78rem;color:var(--txt3);margin-bottom:14px;line-height:1.5">GitHub ile cihazlar arası veri senkronizasyonu.</div>
+    <button class="btn btn-o btn-full" onclick="App.showSyncModal()" style="margin-bottom:8px">&#9729; Senkronizasyonu Aç</button>
+  </div>
+  <div class="frm" style="margin-top:14px">
+    <div class="frm-ttl">&#9888; Veri Yönetimi</div>
+    <button class="btn btn-d btn-full" onclick="if(confirm('Tüm veriler silinsin mi?')){localStorage.removeItem('ds');App.sls={};App.rndAll();tst('Veriler silindi','scs')}" style="margin-top:12px">&#128465; Tüm Verileri Sil</button>
+  </div>
 </div>
 
 </main>
@@ -368,14 +391,14 @@ const App = {
   },
 
   init() {
-    this.ldThm(); this.ld()
+    this.ldThm(); this.ld(); this.ldPrc()
     const n = new Date()
     document.getElementById('hdrDate').textContent = n.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'})
     document.getElementById('saleDate').value = n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0')
     document.getElementById('saleDate').oninput = () => this.lcUpd()
     document.getElementById('qtyN').oninput = () => this.lcUpd()
     document.getElementById('qtyK').oninput = () => this.lcUpd()
-    this.lcUpd(); this.rndAll()
+    this.lcUpd(); this.rndAll(); this.rndSet()
     this.syn.ldTok(); if (this.syn.tok) setTimeout(() => this.syn.pull(), 600)
     document.getElementById('syncModal').onclick = e => { if (e.target.id==='syncModal') clSync() }
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{})
@@ -396,13 +419,21 @@ const App = {
   },
   sv() { try { localStorage.setItem('ds', JSON.stringify(this.sls)) } catch(e) { tst('Kayıt hatası','err') } if (!this._sg&&(this.syn.tok||localStorage.getItem('st'))) setTimeout(()=>this.syn.push(),400) },
 
-  cd(d) { const s=this.sls[d]; if(!s) return {n:0,k:0,t:0,r:0,c:0,p:0}; const n=(s.n||s.nazli||0),k=(s.k||s.kaltun||0); return {n,k,t:n+k,r:n*this.prd.n.sa+k*this.prd.k.sa,c:n*this.prd.n.al+k*this.prd.k.al,p:n*this.prd.n.sa+k*this.prd.k.sa-n*this.prd.n.al-k*this.prd.k.al} },
+  ldPrc() {
+    try {
+      const p = JSON.parse(localStorage.getItem('pr'))
+      if (p) { if (p.n) { this.prd.n.al = p.n.al || 70; this.prd.n.sa = p.n.sa || 130 }
+               if (p.k) { this.prd.k.al = p.k.al || 100; this.prd.k.sa = p.k.sa || 150 } }
+    } catch(e) {}
+  },
+
+  cd(d) { const s=this.sls[d]; if(!s) return {n:0,k:0,t:0,r:0,c:0,p:0}; const n=(s.n||s.nazli||0),k=(s.k||s.kaltun||0); const nf=s.nf||this.prd.n.sa, kf=s.kf||this.prd.k.sa, nal=s.nal||this.prd.n.al, kal=s.kal||this.prd.k.al; return {n,k,t:n+k, r:n*nf+k*kf, c:n*nal+k*kal, p:n*nf+k*kf-n*nal-k*kal} },
   cm(y,m) { let r={n:0,k:0,t:0,r:0,c:0,p:0}; const ds=new Date(y,m,0).getDate(); for(let d=1;d<=ds;d++){const c=this.cd(y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0')); r.n+=c.n;r.k+=c.k;r.t+=c.t;r.r+=c.r;r.c+=c.c;r.p+=c.p} return r },
   cy(y) { let r={n:0,k:0,t:0,r:0,c:0,p:0}; for(let m=1;m<=12;m++){const c=this.cm(y,m); r.n+=c.n;r.k+=c.k;r.t+=c.t;r.r+=c.r;r.c+=c.c;r.p+=c.p} return r },
   gd(y,m) { return new Date(y,m,0).getDate() },
 
   swV(v) {
-    this.cv=v; const names={dash:'Ana Sayfa',add:'Satış Ekle',monthly:'Aylık',yearly:'Yıllık',history:'Geçmiş'}
+    this.cv=v;
     document.querySelectorAll('.pg').forEach(p=>p.classList.remove('act'))
     const el = document.getElementById('pg-'+v); if (el) el.classList.add('act')
     document.querySelectorAll('.bnav a').forEach(a=>a.classList.toggle('act',a.dataset.v===v))
@@ -410,6 +441,7 @@ const App = {
     else if (v==='monthly') this.rndM()
     else if (v==='yearly') this.rndY()
     else if (v==='history') this.rndH()
+    else if (v==='settings') this.rndSet()
   },
 
   rndAll() { this.rndDash(); this.rndM(); this.rndY(); this.rndH() },
@@ -434,6 +466,8 @@ const App = {
     document.getElementById('lcn').textContent=n; document.getElementById('lck').textContent=k
     document.getElementById('lcr').textContent=fm(r); document.getElementById('lcm').textContent=fm(c)
     document.getElementById('lk').textContent=(p>=0?'+':'')+fm(p); document.getElementById('lk').style.color=p>=0?'var(--scs)':'var(--scl)'
+    document.querySelectorAll('.pinfo')[0].textContent='Alış '+this.prd.n.al+'₺ → Satış '+this.prd.n.sa+'₺ (Kâr '+(this.prd.n.sa-this.prd.n.al)+'₺)'
+    document.querySelectorAll('.pinfo')[1].textContent='Alış '+this.prd.k.al+'₺ → Satış '+this.prd.k.sa+'₺ (Kâr '+(this.prd.k.sa-this.prd.k.al)+'₺)'
   },
 
   svSl() {
@@ -441,7 +475,7 @@ const App = {
     const n=parseInt(document.getElementById('qtyN').value)||0, k=parseInt(document.getElementById('qtyK').value)||0
     if(!n&&!k){tst('Adet girin','err');return}
     if(this.sls[d]&&!confirm(d+' için kayıt var. Güncellensin?')) return
-    this.sls[d]={n,k}; this.sv(); this.rndAll()
+    this.sls[d]={n,k, nf:this.prd.n.sa, kf:this.prd.k.sa, nal:this.prd.n.al, kal:this.prd.k.al}; this.sv(); this.rndAll()
     document.getElementById('qtyN').value='0'; document.getElementById('qtyK').value='0'; this.lcUpd()
     tst('✔ '+d+' kaydedildi','scs')
   },
@@ -485,9 +519,21 @@ const App = {
 
   opEd(d) { this.ed=d; const s=this.sls[d]; if(!s)return; document.getElementById('edtDate').value=d; document.getElementById('edtN').value=s.n; document.getElementById('edtK').value=s.k; document.getElementById('editModal').classList.add('show') },
   clEd() { document.getElementById('editModal').classList.remove('show'); this.ed=null },
-  svEd() { const d=this.ed; if(!d)return; const n=parseInt(document.getElementById('edtN').value)||0,k=parseInt(document.getElementById('edtK').value)||0; if(!n&&!k){if(confirm('Kayıt silinsin mi?'))this.dlSlD(d);return}; this.sls[d]={n,k}; this.sv(); this.clEd(); this.rndAll(); tst('✔ Güncellendi','scs') },
+  svEd() { const d=this.ed; if(!d)return; const n=parseInt(document.getElementById('edtN').value)||0,k=parseInt(document.getElementById('edtK').value)||0; if(!n&&!k){if(confirm('Kayıt silinsin mi?'))this.dlSlD(d);return}; const o=this.sls[d]; this.sls[d]={n,k, nf:o.nf||this.prd.n.sa, kf:o.kf||this.prd.k.sa, nal:o.nal||this.prd.n.al, kal:o.kal||this.prd.k.al}; this.sv(); this.clEd(); this.rndAll(); tst('✔ Güncellendi','scs') },
   cfDel() { const d=this.ed; if(d&&confirm(d+' silinsin mi?')) this.dlSlD(d) },
   dlSlD(d) { delete this.sls[d]; this.sv(); this.clEd(); this.rndAll(); tst('🗑 Silindi','scs') },
+
+  rndSet() {
+    document.getElementById('setNAl').value=this.prd.n.al; document.getElementById('setNSa').value=this.prd.n.sa
+    document.getElementById('setKAl').value=this.prd.k.al; document.getElementById('setKSa').value=this.prd.k.sa
+  },
+  svSet() {
+    const nal=parseInt(document.getElementById('setNAl').value)||70, nsa=parseInt(document.getElementById('setNSa').value)||130
+    const kal=parseInt(document.getElementById('setKAl').value)||100, ksa=parseInt(document.getElementById('setKSa').value)||150
+    this.prd.n.al=nal; this.prd.n.sa=nsa; this.prd.k.al=kal; this.prd.k.sa=ksa
+    try { localStorage.setItem('pr', JSON.stringify({n:{al:nal,sa:nsa},k:{al:kal,sa:ksa}})) } catch(e) {}
+    this.lcUpd(); tst('✔ Fiyatlar kaydedildi','scs')
+  },
 
   syncSt(m,t) { const el=document.getElementById('syncSt'); el.textContent=m; if(t==='ok')el.style.color='var(--scs)';else if(t==='er')el.style.color='var(--scl)';else el.style.color='var(--txt3)' },
   showSyncModal() { document.getElementById('syncTok').value=this.syn.ldTok(); const h=localStorage.getItem('st')?'✔ Token var, yükle/indir yapabilirsiniz':'Token girin'; this.syncSt(h); document.getElementById('syncModal').classList.add('show') }
