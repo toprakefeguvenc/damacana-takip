@@ -2,1368 +2,519 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Damacana Takip</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0e7c8a">
+<meta name="theme-color" id="themeMeta" content="#0e7c8a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Damacana">
 <link rel="apple-touch-icon" href="icon.svg">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#f1f5f9;--srf:#ffffff;--srf2:#f8fafc;--txt:#0b1a2e;--txt2:#475569;--txt3:#94a3b8;--prm:#0e7c8a;--prm2:#0a5f6b;--prmglow:rgba(14,124,138,.12);--scs:#059669;--scl:#dc2626;--brd:#e2e8f0;--shw:0 2px 8px rgba(0,0,0,.04);--shwl:0 8px 32px rgba(0,0,0,.06);--rad:14px;--rads:10px;--bn:60px;--hd:50px;--fnt:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif}
+[data-theme=dark]{--bg:#0b1120;--srf:#162033;--srf2:#1a2638;--txt:#e2eaf5;--txt2:#94a9c5;--txt3:#4d6380;--brd:rgba(255,255,255,.06);--prm:#3bc9c9;--prm2:#2bb0b0;--prmglow:rgba(59,201,201,.1);--scs:#34d399;--scl:#ef6b6b;--shw:0 2px 8px rgba(0,0,0,.2);--shwl:0 8px 32px rgba(0,0,0,.3)}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:var(--fnt);background:var(--bg);color:var(--txt);min-height:100vh;min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased;padding-bottom:calc(var(--bn) + 12px);padding-top:calc(var(--hd) + 8px);transition:background .3s}
 
-/* Theme - Light (default) */
-[data-theme="light"],:root{
-  --bg: #f0f5fa;
-  --bg-card: rgba(255,255,255,0.82);
-  --bg-glass: rgba(255,255,255,0.6);
-  --bg-sidebar: rgba(255,255,255,0.85);
-  --text: #0b1a2e;
-  --text2: #3b526d;
-  --text3: #8496b0;
-  --border: rgba(0,0,0,0.06);
-  --primary: #0e7c8a;
-  --primary-dark: #0a5f6b;
-  --primary-glow: rgba(14,124,138,0.12);
-  --primary-glass: rgba(14,124,138,0.08);
-  --success: #0b9b6b;
-  --success-bg: rgba(11,155,107,0.1);
-  --danger: #d14545;
-  --danger-bg: rgba(209,69,69,0.1);
-  --warning: #c9902a;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.02);
-  --shadow: 0 4px 16px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.02);
-  --shadow-lg: 0 12px 40px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.03);
-  --shadow-xl: 0 24px 64px rgba(0,0,0,0.08);
-  --radius: 16px;
-  --radius-sm: 10px;
-  --radius-xs: 6px;
-  --nav-w: 240px;
-  --font: 'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
-  --bg-noise: none;
-  --scrollbar-thumb: #cbd5e1;
-  --scrollbar-track: transparent;
-}
+/* Header */
+.hdr{position:fixed;top:0;left:0;right:0;height:var(--hd);z-index:50;padding:0 16px;display:flex;align-items:center;justify-content:space-between;background:var(--srf);border-bottom:1px solid var(--brd)}
+.hdr-l{display:flex;align-items:center;gap:8px}
+.hdr-l .logo{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--prm),var(--prm2));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hdr-l .logo svg{color:#fff;width:18px;height:18px}
+.hdr-l h1{font-size:.92rem;font-weight:700;letter-spacing:-.3px}
+.hdr-l .hdr-date{font-size:.65rem;color:var(--txt3);display:block;margin-top:-1px}
+.hdr-r{display:flex;align-items:center;gap:6px}
+.hdr-r button{width:36px;height:36px;border:1px solid var(--brd);border-radius:10px;background:var(--srf);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:1rem;color:var(--txt2);flex-shrink:0}
+.hdr-r button:hover{border-color:var(--prm);color:var(--prm)}
 
-/* Theme - Dark */
-[data-theme="dark"]{
-  --bg: #0b1120;
-  --bg-card: rgba(18,26,45,0.85);
-  --bg-glass: rgba(18,26,45,0.5);
-  --bg-sidebar: rgba(11,17,32,0.92);
-  --text: #e2eaf5;
-  --text2: #94a9c5;
-  --text3: #4d6380;
-  --border: rgba(255,255,255,0.06);
-  --primary: #3bc9c9;
-  --primary-dark: #2bb0b0;
-  --primary-glow: rgba(59,201,201,0.12);
-  --primary-glass: rgba(59,201,201,0.06);
-  --success: #3bcf9e;
-  --success-bg: rgba(59,207,158,0.1);
-  --danger: #ef6b6b;
-  --danger-bg: rgba(239,107,107,0.1);
-  --warning: #f0b34b;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.15), 0 1px 2px rgba(0,0,0,0.1);
-  --shadow: 0 4px 16px rgba(0,0,0,0.2), 0 2px 8px rgba(0,0,0,0.12);
-  --shadow-lg: 0 12px 40px rgba(0,0,0,0.25), 0 4px 16px rgba(0,0,0,0.15);
-  --shadow-xl: 0 24px 64px rgba(0,0,0,0.35);
-  --bg-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-  --scrollbar-thumb: #2a3850;
-  --scrollbar-track: transparent;
-}
+/* Pages */
+.pg{display:none;padding:0 16px 20px;animation:pgIn .3s ease}
+.pg.act{display:block}
+.pg-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-top:4px}
+.pg-hdr h2{font-size:1.15rem;font-weight:700;letter-spacing:-.3px}
+.pg-hdr .ctrls{display:flex;gap:6px}
+.pg-hdr .ctrls button{background:var(--srf2);border:1px solid var(--brd);border-radius:var(--rads);padding:7px 14px;cursor:pointer;font-size:.78rem;font-weight:500;color:var(--txt2);font-family:var(--fnt);transition:all .2s;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.pg-hdr .ctrls button:hover{border-color:var(--prm);color:var(--prm)}
+@keyframes pgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-/* Base */
-html{font-size:15px;scroll-behavior:smooth}
-body{
-  font-family:var(--font);
-  background:var(--bg);
-  color:var(--text);
-  min-height:100vh;
-  display:flex;
-  line-height:1.55;
-  -webkit-font-smoothing:antialiased
-}
+/* Bottom Nav */
+.bnav{position:fixed;bottom:0;left:0;right:0;height:var(--bn);z-index:50;background:var(--srf);border-top:1px solid var(--brd);display:flex;align-items:stretch;padding:4px 0 env(safe-area-inset-bottom,4px)}
+.bnav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--txt3);text-decoration:none;font-size:.55rem;font-weight:600;transition:color .2s;cursor:pointer;letter-spacing:.1px;border:none;background:none;font-family:var(--fnt)}
+.bnav a svg{width:22px;height:22px;transition:color .2s}
+.bnav a.act{color:var(--prm)}
+.bnav a.act svg{color:var(--prm)}
 
-/* Scrollbar */
-::-webkit-scrollbar{width:6px;height:6px}
-::-webkit-scrollbar-track{background:var(--scrollbar-track)}
-::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);border-radius:3px}
-::-webkit-scrollbar-thumb:hover{background:var(--text3)}
-
-/* Sidebar */
-.sidebar{
-  position:fixed;top:0;left:0;
-  width:var(--nav-w);height:100vh;
-  background:var(--bg-sidebar);
-  border-right:1px solid var(--border);
-  display:flex;flex-direction:column;
-  z-index:100;
-  transition:transform .25s;
-  overflow:hidden
-}
-.sidebar-brand{
-  padding:28px 22px 22px;
-  display:flex;align-items:center;gap:12px;
-  border-bottom:1px solid var(--border);
-  position:relative
-}
-.sidebar-brand .logo-wrap{
-  width:40px;height:40px;
-  border-radius:12px;
-  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;
-  box-shadow:0 4px 12px var(--primary-glow)
-}
-.sidebar-brand .logo-wrap svg{color:#fff}
-.sidebar-brand h1{
-  font-size:1.05rem;font-weight:700;color:var(--text);
-  letter-spacing:-.3px;line-height:1.2
-}
-.sidebar-brand span{
-  font-size:.6rem;color:var(--text3);
-  display:block;font-weight:500;letter-spacing:.3px;text-transform:uppercase;
-  margin-top:1px
-}
-.nav{flex:1;padding:14px 10px;display:flex;flex-direction:column;gap:2px}
-.nav a{
-  display:flex;align-items:center;gap:12px;
-  padding:11px 14px;
-  border-radius:var(--radius-sm);
-  color:var(--text2);
-  text-decoration:none;
-  font-size:.88rem;font-weight:500;
-  cursor:pointer;user-select:none;
-  transition:all .2s;
-  position:relative
-}
-.nav a:hover{color:var(--text);background:var(--primary-glass)}
-.nav a.active{
-  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
-  color:#fff;font-weight:600;
-  box-shadow:0 4px 16px var(--primary-glow)
-}
-.nav a svg{flex-shrink:0}
-.nav a .nav-badge{
-  margin-left:auto;
-  font-size:.6rem;
-  background:rgba(255,255,255,.15);
-  padding:2px 8px;
-  border-radius:10px;
-  color:inherit
-}
-.nav a.active .nav-badge{background:rgba(255,255,255,.2)}
-.sidebar-footer{
-  padding:16px 22px;
-  border-top:1px solid var(--border);
-  font-size:.65rem;color:var(--text3);
-  display:flex;align-items:center;justify-content:space-between
-}
-.sidebar-footer .theme-dot{
-  width:8px;height:8px;border-radius:50%;
-  display:inline-block;
-  transition:background .35s
-}
-[data-theme="light"] .sidebar-footer .theme-dot{background:var(--warning)}
-[data-theme="dark"] .sidebar-footer .theme-dot{background:var(--primary)}
-
-/* Main Content */
-.main{
-  margin-left:var(--nav-w);flex:1;
-  min-height:100vh;
-  padding:32px 36px 100px;
-  max-width:1260px;width:100%;
-  transition:margin-left .35s
-}
-.main-header{
-  display:flex;align-items:center;
-  justify-content:space-between;
-  margin-bottom:32px
-}
-.main-header .left{display:flex;align-items:center;gap:14px}
-.main-header h2{
-  font-size:1.5rem;font-weight:700;
-  letter-spacing:-.5px;background:linear-gradient(135deg,var(--text),var(--text2));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  background-clip:text
-}
-.main-header .date{font-size:.82rem;color:var(--text3);font-weight:500}
-
-/* Theme Toggle */
-.theme-toggle{
-  width:44px;height:44px;
-  border-radius:12px;
-  border:1px solid var(--border);
-  background:var(--bg-card);
-  cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:color .2s,border-color .2s;
-  color:var(--text2);
-  font-size:1.2rem;
-  position:relative
-}
-.theme-toggle:hover{
-  border-color:var(--primary);
-  color:var(--primary);
-  box-shadow:0 4px 16px var(--primary-glow)
-}
-.sync-btn{
-  width:44px;height:44px;
-  border-radius:12px;
-  border:1px solid var(--border);
-  background:var(--bg-card);
-  cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:color .2s,border-color .2s;
-  color:var(--text3);
-  font-size:1.1rem;
-  position:relative
-}
-.sync-btn:hover{border-color:var(--primary);color:var(--primary)}
-.sync-btn.synced{color:var(--success)}
-.sync-btn.error{color:var(--danger)}
-.sync-btn.syncing{animation:pulse 1.2s ease infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.sync-status{font-size:.7rem;color:var(--text3);margin-left:4px}
-.theme-toggle .icon-sun,.theme-toggle .icon-moon{transition:opacity .2s;position:absolute}
-[data-theme="light"] .theme-toggle .icon-moon{opacity:0}
-[data-theme="light"] .theme-toggle .icon-sun{opacity:1}
-[data-theme="dark"] .theme-toggle .icon-sun{opacity:0}
-[data-theme="dark"] .theme-toggle .icon-moon{opacity:1}
-
-/* Views */
-.view{display:none}
-.view.active{display:block}
-
-/* Glass Card */
-.glass{
-  background:var(--bg-card);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  transition:box-shadow .25s;
-  position:relative;overflow:hidden
-}
-
-/* Dashboard Cards */
-.cards{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:16px;
-  margin-bottom:28px
-}
-.card{
-  background:var(--bg-card);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:22px 24px;
-  transition:box-shadow .2s,transform .2s;
-  position:relative;overflow:hidden
-}
-.card::after{
-  content:'';position:absolute;top:0;left:0;right:0;height:3px;
-  opacity:0;transition:opacity .3s
-}
-.card:hover::after{opacity:1}
-.card:hover{
-  box-shadow:var(--shadow-lg)
-}
-.card .card-icon{
-  width:40px;height:40px;border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  margin-bottom:14px;
-  font-size:1.1rem
-}
-.card.count .card-icon{background:var(--primary-glass);color:var(--primary)}
-.card.count::after{background:linear-gradient(90deg,var(--primary),var(--primary-dark))}
-.card.revenue .card-icon{background:var(--success-bg);color:var(--success)}
-.card.revenue::after{background:linear-gradient(90deg,var(--success),#0b9b6b)}
-.card.profit .card-icon{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;box-shadow:0 4px 12px var(--primary-glow)}
-.card.profit::after{background:linear-gradient(90deg,var(--primary),#3bc9c9)}
-.card .label{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin-bottom:2px}
-.card .value{font-size:1.75rem;font-weight:800;letter-spacing:-.6px;line-height:1.1}
-.card .sub{font-size:.78rem;color:var(--text2);margin-top:5px}
-.card.profit .value{color:var(--success)}
-.card.revenue .value{color:var(--success)}
-.card.count .value{color:var(--text)}
-
-/* Add Sale */
-.add-form{
-  background:var(--bg-card);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:28px 32px;
-  max-width:500px
-}
-.add-form .form-title{
-  font-size:1.1rem;font-weight:700;margin-bottom:20px;
-  letter-spacing:-.3px
-}
-.form-group{margin-bottom:18px}
-.form-group label{
-  display:block;font-size:.78rem;font-weight:600;
-  color:var(--text2);margin-bottom:6px;letter-spacing:.2px
-}
-.form-group input[type=date],.form-group input[type=number]{
-  width:100%;padding:10px 14px;
-  border:1.5px solid var(--border);
-  border-radius:var(--radius-sm);
-  font-size:.92rem;font-family:var(--font);
-  color:var(--text);
-  background:var(--bg);
-  transition:all .25s;outline:none
-}
-.form-group input:focus{
-  border-color:var(--primary);
-  box-shadow:0 0 0 3px var(--primary-glow)
-}
-.qty-row{
-  display:flex;align-items:center;gap:14px;
-  padding:12px 16px;
-  background:var(--bg);
-  border-radius:var(--radius-sm);
-  border:1px solid var(--border)
-}
-.qty-row label{white-space:nowrap;margin-bottom:0;min-width:70px;font-size:.85rem;color:var(--text)}
-.qty-input{display:flex;align-items:center;gap:6px}
-.qty-input button{
-  width:34px;height:34px;
-  border:1.5px solid var(--border);
-  border-radius:8px;
-  background:var(--bg-card);
-  color:var(--text2);
-  font-size:1.1rem;
-  cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:all .2s;
-  font-family:var(--font);line-height:1
-}
-.qty-input button:hover{
-  border-color:var(--primary);color:var(--primary);
-  background:var(--primary-glass)
-}
-.qty-input input{width:60px;text-align:center;padding:7px 4px;font-weight:600}
-.product-info{font-size:.7rem;color:var(--text3);margin-top:3px;margin-left:0}
-
-/* Live Calc */
-.live-calc{
-  background:var(--primary-glass);
-  border:1px solid var(--border);
-  border-radius:var(--radius-sm);
-  padding:16px 20px;
-  margin:20px 0;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px 20px
-}
-.live-calc .item{font-size:.82rem;color:var(--text2)}
-.live-calc .item strong{color:var(--text);font-weight:700}
-.live-calc .profit{
-  grid-column:1/-1;
-  font-size:1.15rem;font-weight:700;
-  text-align:center;
-  padding-top:6px;
-  border-top:1px solid var(--border);
-  margin-top:2px
-}
-
-/* Buttons */
-.btn{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:11px 24px;border:none;
-  border-radius:var(--radius-sm);
-  font-size:.88rem;font-weight:600;font-family:var(--font);
-  cursor:pointer;transition:all .25s;text-decoration:none;
-  justify-content:center
-}
-.btn-primary{
-  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
-  color:#fff;
-  box-shadow:0 4px 12px var(--primary-glow)
-}
-.btn-primary:hover{box-shadow:0 8px 24px var(--primary-glow)}
-.btn-success{
-  background:linear-gradient(135deg,var(--success),#0b9b6b);
-  color:#fff;
-  box-shadow:0 4px 14px rgba(11,155,107,0.25)
-}
-.btn-success:hover{box-shadow:0 8px 24px rgba(11,155,107,0.3)}
-.btn-danger{
-  background:linear-gradient(135deg,var(--danger),#b53a3a);
-  color:#fff
-}
-.btn-danger:hover{box-shadow:0 4px 16px rgba(209,69,69,.25)}
-.btn-outline{
-  background:transparent;
-  border:1.5px solid var(--border);
-  color:var(--text2)
-}
-.btn-outline:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-glass)}
-.btn-ghost{
-  background:transparent;border:none;
-  color:var(--text3);padding:8px 12px
-}
-.btn-ghost:hover{color:var(--text);background:var(--primary-glass)}
-.btn-sm{padding:8px 16px;font-size:.8rem}
-.btn-icon{
-  width:34px;height:34px;padding:0;
-  border-radius:8px;
-  display:inline-flex;align-items:center;justify-content:center
-}
+/* Cards */
+.crds{display:flex;flex-direction:column;gap:12px;margin-bottom:14px}
+.crd{background:var(--srf);border:1px solid var(--brd);border-radius:var(--rad);padding:16px 18px;transition:box-shadow .2s}
+.crd .crd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.crd .crd-icn{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.crd .crd-lbl{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--txt3)}
+.crd .crd-val{font-size:1.65rem;font-weight:800;letter-spacing:-.5px;line-height:1.1}
+.crd .crd-sub{font-size:.75rem;color:var(--txt2);margin-top:3px}
+.crd.scs .crd-icn{background:linear-gradient(135deg,var(--prm),var(--prm2));color:#fff}
+.crd.scs .crd-val{color:var(--scs)}
 
 /* Tables */
-.table-wrap{
-  background:var(--bg-card);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  overflow:hidden
-}
-.table-wrap .table-header{
-  display:flex;align-items:center;
-  justify-content:space-between;
-  padding:18px 24px;
-  border-bottom:1px solid var(--border);
-  flex-wrap:wrap;gap:10px
-}
-.table-wrap .table-header h3{font-size:.95rem;font-weight:600}
-.table-wrap .table-header .controls{display:flex;align-items:center;gap:8px}
-.table-wrap .table-header .controls button{
-  background:var(--bg);border:1px solid var(--border);
-  border-radius:var(--radius-xs);padding:7px 14px;
-  cursor:pointer;font-size:.8rem;font-weight:500;
-  color:var(--text2);font-family:var(--font);
-  transition:all .2s;
-  display:flex;align-items:center;gap:5px
-}
-.table-wrap .table-header .controls button:hover{
-  border-color:var(--primary);color:var(--primary)
-}
-table{width:100%;border-collapse:collapse}
-th,td{
-  padding:11px 18px;text-align:left;
-  font-size:.84rem;border-bottom:1px solid var(--border)
-}
-th{
-  font-weight:600;color:var(--text3);
-  font-size:.7rem;text-transform:uppercase;
-  letter-spacing:.5px;background:var(--bg)
-}
+.tbl{background:var(--srf);border:1px solid var(--brd);border-radius:var(--rad);overflow:hidden}
+.tbl .tbl-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--brd);flex-wrap:wrap;gap:6px}
+.tbl .tbl-hdr h3{font-size:.88rem;font-weight:600}
+.tbl-scrl{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;min-width:480px}
+th,td{padding:10px 14px;text-align:left;font-size:.8rem;border-bottom:1px solid var(--brd);white-space:nowrap}
+th{font-weight:600;color:var(--txt3);font-size:.68rem;text-transform:uppercase;letter-spacing:.4px;background:var(--srf2)}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:var(--primary-glass)}
-td:last-child{text-align:right}
-th:last-child{text-align:right}
-td .actions{display:flex;gap:4px;justify-content:flex-end}
-.text-right{text-align:right!important}
-.text-success{color:var(--success);font-weight:600}
-.text-muted{color:var(--text3);font-weight:400}
+tr:active td{background:var(--prmglow)}
+td:last-child{text-align:right}th:last-child{text-align:right}
+.tac{text-align:center!important}
+.tar{text-align:right!important}
+.t-scs{color:var(--scs);font-weight:600}
+.t-mut{color:var(--txt3);font-weight:400}
+td .acts{display:flex;gap:4px;justify-content:flex-end}
+td .acts button{width:32px;height:32px;border:1px solid var(--brd);border-radius:8px;background:var(--srf);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .2s;color:var(--txt2)}
+td .acts button:active{background:var(--prmglow);border-color:var(--prm);color:var(--prm)}
 
 /* Chart */
-.chart-wrap{
-  background:var(--bg-card);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:24px;margin-top:16px
-}
-.chart-wrap h3{font-size:.92rem;font-weight:600;margin-bottom:18px}
-.chart{
-  display:flex;align-items:flex-end;
-  gap:5px;height:170px;
-  padding:18px 4px 24px;
-  position:relative
-}
-.chart .bar{
-  flex:1;display:flex;
-  flex-direction:column;align-items:center;
-  justify-content:flex-end;position:relative;
-  min-height:6px;border-radius:4px 4px 0 0;
-  transition:height .3s ease;
-  background:linear-gradient(180deg,var(--primary),var(--primary-dark));
-  box-shadow:0 0 12px var(--primary-glow);
-  cursor:pointer
-}
-.chart .bar:hover{opacity:.85}
-.chart .bar .bar-val{
-  position:absolute;top:-17px;
-  font-size:.6rem;font-weight:700;
-  color:var(--text2);white-space:nowrap
-}
-.chart .bar .bar-lbl{
-  position:absolute;bottom:-20px;
-  font-size:.62rem;color:var(--text3);
-  white-space:nowrap;font-weight:500
-}
-.chart .bar.empty{
-  background:var(--border);
-  min-height:6px;box-shadow:none
-}
-.chart .bar.empty .bar-lbl{bottom:-20px}
-.chart .bar.empty .bar-val{display:none}
+.chrt{border:1px solid var(--brd);border-radius:var(--rad);padding:18px 16px;background:var(--srf);margin-top:12px}
+.chrt h3{font-size:.88rem;font-weight:600;margin-bottom:14px}
+.chrt-b{display:flex;align-items:flex-end;gap:4px;height:150px;padding:16px 0 22px}
+.chrt-b .bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;position:relative;min-height:6px;border-radius:3px 3px 0 0;background:linear-gradient(180deg,var(--prm),var(--prm2))}
+.chrt-b .bar .bv{position:absolute;top:-16px;font-size:.6rem;font-weight:700;color:var(--txt2);white-space:nowrap}
+.chrt-b .bar .bl{position:absolute;bottom:-19px;font-size:.6rem;color:var(--txt3);white-space:nowrap;font-weight:500}
+.chrt-b .bar.emp{background:var(--brd);min-height:6px}
+.chrt-b .bar.emp .bl{bottom:-19px}
+.chrt-b .bar.emp .bv{display:none}
+
+/* Form */
+.frm{background:var(--srf);border:1px solid var(--brd);border-radius:var(--rad);padding:20px}
+.frm .frm-ttl{font-size:1rem;font-weight:700;margin-bottom:18px;letter-spacing:-.3px}
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:.75rem;font-weight:600;color:var(--txt2);margin-bottom:5px}
+.fg input[type=date],.fg input[type=number]{width:100%;padding:11px 14px;border:1.5px solid var(--brd);border-radius:var(--rads);font-size:.9rem;font-family:var(--fnt);color:var(--txt);background:var(--srf2);transition:border-color .2s;outline:none;-webkit-appearance:none}
+.fg input:focus{border-color:var(--prm)}
+.qrw{display:flex;align-items:center;gap:10px;background:var(--srf2);border:1px solid var(--brd);border-radius:var(--rads);padding:8px 12px}
+.qrw label{white-space:nowrap;margin-bottom:0;font-size:.85rem;color:var(--txt)}
+.qrw .qi{display:flex;align-items:center;gap:5px}
+.qrw .qi button{width:38px;height:38px;border:1.5px solid var(--brd);border-radius:10px;background:var(--srf);color:var(--txt2);font-size:1.15rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:var(--fnt);line-height:1;-webkit-appearance:none}
+.qrw .qi button:active{background:var(--prmglow);border-color:var(--prm);color:var(--prm)}
+.qrw .qi input{width:56px;text-align:center;padding:8px 4px;font-weight:600}
+.pinfo{font-size:.68rem;color:var(--txt3);margin-top:3px}
+
+/* Live Calc */
+.lc{background:var(--prmglow);border:1px solid var(--brd);border-radius:var(--rads);padding:14px;margin:16px 0;display:grid;grid-template-columns:1fr 1fr;gap:6px 16px}
+.lc .li{font-size:.8rem;color:var(--txt2)}
+.lc .li strong{color:var(--txt);font-weight:700}
+.lc .lp{grid-column:1/-1;font-size:1.1rem;font-weight:700;text-align:center;padding-top:6px;border-top:1px solid var(--brd);margin-top:2px}
+
+/* Buttons */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 20px;border:none;border-radius:var(--rads);font-size:.88rem;font-weight:600;font-family:var(--fnt);cursor:pointer;transition:all .15s;-webkit-appearance:none}
+.btn-p{background:linear-gradient(135deg,var(--prm),var(--prm2));color:#fff}
+.btn-p:active{opacity:.9;transform:scale(.97)}
+.btn-s{background:linear-gradient(135deg,var(--scs),#0b9b6b);color:#fff}
+.btn-s:active{opacity:.9;transform:scale(.97)}
+.btn-d{background:var(--scl);color:#fff}
+.btn-d:active{opacity:.9}
+.btn-o{background:transparent;border:1.5px solid var(--brd);color:var(--txt2)}
+.btn-o:active{border-color:var(--prm);color:var(--prm);background:var(--prmglow)}
+.btn-full{width:100%}
+
+/* Empty */
+.emp{text-align:center;padding:40px 20px;color:var(--txt3)}
+.emp .ei{width:48px;height:48px;margin:0 auto 12px;border-radius:50%;background:var(--srf2);display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.emp h4{font-size:.95rem;font-weight:600;color:var(--txt2);margin-bottom:3px}
+.emp p{font-size:.8rem}
 
 /* Modal */
-.modal-overlay{
-  position:fixed;top:0;left:0;right:0;bottom:0;
-  background:rgba(0,0,0,.25);
-  z-index:1000;display:none;
-  align-items:center;justify-content:center;
-  animation:fadeIn .2s
-}
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.25);z-index:100;display:none;align-items:flex-end;justify-content:center;animation:fadeIn .2s}
 .modal-overlay.show{display:flex}
-.modal{
-  background:var(--bg-card);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  width:90%;max-width:400px;
-  box-shadow:var(--shadow-xl);
-  padding:28px 28px 24px;
-  animation:slideUp .25s ease
-}
-.modal h3{font-size:1rem;font-weight:700;margin-bottom:20px}
-.modal .form-group{margin-bottom:14px}
-.modal .modal-actions{
-  display:flex;gap:10px;
-  justify-content:flex-end;
-  margin-top:22px;padding-top:16px;
-  border-top:1px solid var(--border)
-}
+.modal{background:var(--srf);border-radius:var(--rad) var(--rad) 0 0;width:100%;max-width:500px;box-shadow:0 -4px 24px rgba(0,0,0,.08);padding:24px 20px 28px;animation:slideUp .25s ease}
+.modal h3{font-size:1rem;font-weight:700;margin-bottom:18px}
+.modal .fg{margin-bottom:12px}
+.modal .modal-acts{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;padding-top:14px;border-top:1px solid var(--brd)}
+.modal .modal-acts .btn{padding:10px 18px}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
 
 /* Toast */
-.toast-container{
-  position:fixed;top:20px;right:20px;
-  z-index:2000;
-  display:flex;flex-direction:column;gap:8px;
-  pointer-events:none
-}
-.toast{
-  background:var(--bg-card);
-  border:1px solid var(--border);
-  border-radius:var(--radius-sm);
-  padding:12px 18px;
-  box-shadow:var(--shadow-lg);
-  display:flex;align-items:center;gap:10px;
-  font-size:.85rem;font-weight:500;
-  animation:slideToast .25s ease;
-  pointer-events:all;
-  min-width:260px;
-  border-left:3px solid var(--primary)
-}
-.toast.success{border-left-color:var(--success)}
-.toast.error{border-left-color:var(--danger)}
-.toast .toast-close{
-  cursor:pointer;color:var(--text3);
-  font-size:1.2rem;margin-left:auto;
-  background:none;border:none;
-  font-family:var(--font);padding:0 4px
-}
+.toast-container{position:fixed;top:calc(var(--hd) + 8px);left:12px;right:12px;z-index:200;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.toast{background:var(--srf);border:1px solid var(--brd);border-radius:var(--rads);padding:12px 16px;box-shadow:var(--shwl);display:flex;align-items:center;gap:10px;font-size:.82rem;font-weight:500;animation:slideT .25s ease;pointer-events:all;border-left:3px solid var(--prm)}
+.toast.scs{border-left-color:var(--scs)}
+.toast.err{border-left-color:var(--scl)}
+.toast .tc{background:none;border:none;cursor:pointer;color:var(--txt3);font-size:1.1rem;margin-left:auto;padding:0 4px;font-family:var(--fnt)}
+@keyframes slideT{from{transform:translateY(-20px);opacity:0}to{transform:translateY(0);opacity:1}}
 
-/* Empty state */
-.empty-state{
-  text-align:center;padding:52px 24px;
-  color:var(--text3)
-}
-.empty-state .empty-icon{
-  width:56px;height:56px;
-  margin:0 auto 14px;
-  border-radius:50%;
-  background:var(--bg);
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.5rem
-}
-.empty-state h4{font-size:1rem;font-weight:600;color:var(--text2);margin-bottom:4px}
-.empty-state p{font-size:.85rem;color:var(--text3)}
+/* Sync Status Dot */
+.syncd{display:inline-block;width:7px;height:7px;border-radius:50%;margin-left:4px}
+.syncd.ok{background:var(--scs)}
+.syncd.off{background:var(--txt3)}
+.syncd.sg{background:var(--prm);animation:pls 1s ease infinite}
+.syncd.er{background:var(--scl)}
+@keyframes pls{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* Animations */
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes slideUp{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
-@keyframes slideToast{from{transform:translateX(40px);opacity:0}to{transform:translateX(0);opacity:1}}
-
-/* Mobile */
-.mobile-nav{display:none}
-.menu-toggle{display:none}
-
-/* Responsive */
-@media(max-width:860px){
-  .sidebar{transform:translateX(-100%)}
-  .sidebar.open{transform:translateX(0)}
-  .main{margin-left:0;padding:20px 16px 80px}
-  .cards{grid-template-columns:1fr}
-  .sidebar-footer,.sidebar-brand .brand-sub{display:none}
-  .card .value{font-size:1.4rem}
-  .mobile-nav{
-    display:flex;
-    position:fixed;bottom:0;left:0;right:0;
-    background:var(--bg-sidebar);
-    border-top:1px solid var(--border);
-    z-index:100;
-    padding:4px 0 env(safe-area-inset-bottom,4px);
-    justify-content:space-around
-  }
-  .mobile-nav a{
-    display:flex;flex-direction:column;
-    align-items:center;gap:1px;
-    padding:6px 6px;
-    border-radius:var(--radius-xs);
-    color:var(--text3);text-decoration:none;
-    font-size:.55rem;font-weight:600;
-    cursor:pointer;transition:all .2s;
-    min-width:0;letter-spacing:.2px
-  }
-  .mobile-nav a svg{width:20px;height:20px}
-  .mobile-nav a.active{color:var(--primary)}
-  .mobile-nav a span{margin-top:1px}
-  .menu-toggle{
-    display:flex!important;
-    background:var(--bg-card);
-    border:1px solid var(--border);
-    border-radius:10px;
-    font-size:1.3rem;
-    cursor:pointer;
-    color:var(--text2);
-    padding:8px 10px;
-    font-family:var(--font)
-  }
-  .live-calc{grid-template-columns:1fr;text-align:center}
-  .add-form{max-width:100%}
-  .table-wrap{overflow-x:auto}
-  table{min-width:620px}
-  .main-header{margin-bottom:20px}
-  .main-header h2{font-size:1.2rem}
-}
-
-@media(max-width:480px){
-  .card{padding:18px 18px}
-  .card .value{font-size:1.3rem}
-  .modal{padding:20px 18px;width:93%}
-  .add-form{padding:20px 18px}
-  .qty-row{padding:10px 12px;flex-wrap:wrap;gap:10px}
-  .product-info{margin-left:0}
-}
+/* Touch feedback */
+*{-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font-family:var(--fnt)}
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 </style>
 </head>
 <body data-theme="light">
 
-<!-- Sidebar -->
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-brand">
-    <div class="logo-wrap">
-      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C12 2 5 11 5 15c0 3.9 3.1 7 7 7s7-3.1 7-7c0-4-7-13-7-13z"/><path d="M12 10v4"/><circle cx="12" cy="6" r=".8" fill="currentColor"/></svg>
-    </div>
-    <div>
-      <h1>Damacana Takip</h1>
-      <span>Nazlı &amp; Kaltun</span>
-    </div>
+<!-- Header -->
+<header class="hdr">
+  <div class="hdr-l">
+    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C12 2 5 11 5 15c0 3.9 3.1 7 7 7s7-3.1 7-7c0-4-7-13-7-13z"/><path d="M12 10v4"/><circle cx="12" cy="6" r=".7" fill="currentColor"/></svg></div>
+    <div><h1>Damacana Takip</h1><span class="hdr-date" id="hdrDate"></span></div>
   </div>
-  <nav class="nav">
-    <a data-view="dashboard" class="active" onclick="switchView('dashboard')">
-      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>
-      Dashboard
-    </a>
-    <a data-view="add" onclick="switchView('add')">
-      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="12" y1="8" x2="12" y2="16"/></svg>
-      Satış Ekle
-    </a>
-    <a data-view="monthly" onclick="switchView('monthly')">
-      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
-      Aylık
-    </a>
-    <a data-view="yearly" onclick="switchView('yearly')">
-      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="13" width="4" height="7" rx="1"/><rect x="10" y="9" width="4" height="11" rx="1"/><rect x="16" y="5" width="4" height="15" rx="1"/></svg>
-      Yıllık
-    </a>
-    <a data-view="history" onclick="switchView('history')">
-      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
-      Geçmiş
-    </a>
-  </nav>
-  <div class="sidebar-footer">
-    <span>v1.0 · offline</span>
-    <span class="theme-dot"></span>
+  <div class="hdr-r">
+    <button id="syncHdrBtn" onclick="App.showSyncModal()" title="Senkron">&#9729;<span class="syncd off" id="syncDot"></span></button>
+    <button onclick="App.toggleTheme()" title="Tema">&#9790;</button>
   </div>
-</aside>
+</header>
 
-<!-- Mobile Bottom Nav -->
-<nav class="mobile-nav" id="mobileNav">
-  <a data-view="dashboard" class="active" onclick="switchView('dashboard')">
+<!-- Pages -->
+<main id="content">
+
+<!-- Dashboard -->
+<div class="pg act" id="pg-dash">
+  <div class="crds" id="dashCrds"></div>
+  <div class="tbl"><div class="tbl-hdr"><h3>Son Satışlar</h3></div><div id="dashList"></div></div>
+</div>
+
+<!-- Add -->
+<div class="pg" id="pg-add">
+  <div class="frm">
+    <div class="frm-ttl">&#x1F4CB; Yeni Satış</div>
+    <div class="fg">
+      <label>Tarih</label>
+      <input type="date" id="saleDate">
+    </div>
+    <div class="fg">
+      <label>Nazlı</label>
+      <div class="qrw">
+        <div class="qi">
+          <button onclick="adjQty('n',-1)">−</button>
+          <input type="number" id="qtyN" value="0" min="0">
+          <button onclick="adjQty('n',1)">+</button>
+        </div>
+      </div>
+      <div class="pinfo">Alış 70₺ → Satış 130₺ (Kâr 60₺)</div>
+    </div>
+    <div class="fg">
+      <label>Kaltun</label>
+      <div class="qrw">
+        <div class="qi">
+          <button onclick="adjQty('k',-1)">−</button>
+          <input type="number" id="qtyK" value="0" min="0">
+          <button onclick="adjQty('k',1)">+</button>
+        </div>
+      </div>
+      <div class="pinfo">Alış 100₺ → Satış 150₺ (Kâr 50₺)</div>
+    </div>
+    <div class="lc" id="lc">
+      <span class="li">Nazlı: <strong id="lcn">0</strong></span>
+      <span class="li">Kaltun: <strong id="lck">0</strong></span>
+      <span class="li">Ciro: <strong id="lcr">0₺</strong></span>
+      <span class="li">Maliyet: <strong id="lcm">0₺</strong></span>
+      <span class="lp">Kâr: <span id="lk">0₺</span></span>
+    </div>
+    <button class="btn btn-s btn-full" onclick="saveSale()">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Satışı Kaydet
+    </button>
+  </div>
+</div>
+
+<!-- Monthly -->
+<div class="pg" id="pg-monthly">
+  <div class="pg-hdr">
+    <h2 id="mTitle">Aylık</h2>
+    <div class="ctrls">
+      <button onclick="chMonth(-1)">&#9664;</button>
+      <button onclick="chMonth(1)">&#9654;</button>
+    </div>
+  </div>
+  <div class="tbl"><div id="mTable"></div></div>
+</div>
+
+<!-- Yearly -->
+<div class="pg" id="pg-yearly">
+  <div class="pg-hdr">
+    <h2 id="yTitle">Yıllık</h2>
+    <div class="ctrls">
+      <button onclick="chYear(-1)">&#9664;</button>
+      <button onclick="chYear(1)">&#9654;</button>
+    </div>
+  </div>
+  <div class="tbl"><div id="yTable"></div></div>
+  <div class="chrt"><h3>Aylık Kâr</h3><div class="chrt-b" id="yChart"></div></div>
+</div>
+
+<!-- History -->
+<div class="pg" id="pg-history">
+  <div class="pg-hdr">
+    <h2>Geçmiş</h2>
+    <div class="ctrls">
+      <button onclick="App.sa=!App.sa;App.rndH();App.hstBtn()" id="hstBtn">&#9650; Yeni</button>
+    </div>
+  </div>
+  <div class="tbl"><div id="hstTable"></div></div>
+</div>
+
+</main>
+
+<!-- Bottom Nav -->
+<nav class="bnav" id="bnav">
+  <a class="act" data-v="dash" onclick="swV('dash')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>
     <span>Ana Sayfa</span>
   </a>
-  <a data-view="add" onclick="switchView('add')">
+  <a data-v="add" onclick="swV('add')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="12" y1="8" x2="12" y2="16"/></svg>
     <span>Ekle</span>
   </a>
-  <a data-view="monthly" onclick="switchView('monthly')">
+  <a data-v="monthly" onclick="swV('monthly')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
     <span>Aylık</span>
   </a>
-  <a data-view="yearly" onclick="switchView('yearly')">
+  <a data-v="yearly" onclick="swV('yearly')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="13" width="4" height="7" rx="1"/><rect x="10" y="9" width="4" height="11" rx="1"/><rect x="16" y="5" width="4" height="15" rx="1"/></svg>
     <span>Yıllık</span>
   </a>
-  <a data-view="history" onclick="switchView('history')">
+  <a data-v="history" onclick="swV('history')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
     <span>Geçmiş</span>
   </a>
 </nav>
 
-<!-- Main Content -->
-<main class="main">
-  <div class="main-header">
-    <div class="left">
-      <button class="menu-toggle" onclick="App.toggleSidebar()">&#9776;</button>
-      <h2 id="viewTitle">Dashboard</h2>
-    </div>
-    <div style="display:flex;align-items:center;gap:12px">
-      <div class="date" id="currentDate"></div>
-      <button class="sync-btn" id="syncBtn" onclick="App.showSyncModal()" title="Senkronizasyon">&#9729;</button>
-      <button class="theme-toggle" onclick="App.toggleTheme()" title="Tema değiştir">
-        <span class="icon-sun">&#9788;</span>
-        <span class="icon-moon">&#9790;</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- DASHBOARD -->
-  <div class="view active" id="view-dashboard">
-    <div class="cards" id="dashboardCards"></div>
-    <div class="table-wrap">
-      <div class="table-header"><h3>Son Satışlar</h3></div>
-      <div id="recentSales"></div>
-    </div>
-  </div>
-
-  <!-- ADD -->
-  <div class="view" id="view-add">
-    <div class="add-form">
-      <div class="form-title">&#x1F4CB; Yeni Satış Kaydı</div>
-      <div class="form-group">
-        <label>Tarih</label>
-        <input type="date" id="saleDate">
-      </div>
-      <div class="form-group">
-        <label>Nazlı</label>
-        <div class="qty-row">
-          <div class="qty-input">
-            <button onclick="adjustQty('nazli',-1)">−</button>
-            <input type="number" id="qtyNazli" value="0" min="0">
-            <button onclick="adjustQty('nazli',1)">+</button>
-          </div>
-        </div>
-        <div class="product-info">Alış 70₺ → Satış 130₺ · Birim Kâr: 60₺</div>
-      </div>
-      <div class="form-group">
-        <label>Kaltun</label>
-        <div class="qty-row">
-          <div class="qty-input">
-            <button onclick="adjustQty('kaltun',-1)">−</button>
-            <input type="number" id="qtyKaltun" value="0" min="0">
-            <button onclick="adjustQty('kaltun',1)">+</button>
-          </div>
-        </div>
-        <div class="product-info">Alış 100₺ → Satış 150₺ · Birim Kâr: 50₺</div>
-      </div>
-      <div class="live-calc" id="liveCalc">
-        <span class="item">Nazlı: <strong id="lcNazli">0</strong> adet</span>
-        <span class="item">Kaltun: <strong id="lcKaltun">0</strong> adet</span>
-        <span class="item">Ciro: <strong id="lcCiro">0₺</strong></span>
-        <span class="item">Maliyet: <strong id="lcMaliyet">0₺</strong></span>
-        <span class="profit">Kâr: <span id="lcKar">0₺</span></span>
-      </div>
-      <button class="btn btn-success" onclick="saveSale()" style="width:100%">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        Satışı Kaydet
-      </button>
-    </div>
-  </div>
-
-  <!-- MONTHLY -->
-  <div class="view" id="view-monthly">
-    <div class="table-wrap">
-      <div class="table-header">
-        <h3 id="monthlyTitle">Aylık Görünüm</h3>
-        <div class="controls">
-          <button onclick="changeMonth(-1)">&#9664; Önceki</button>
-          <button onclick="changeMonth(1)">Sonraki &#9654;</button>
-        </div>
-      </div>
-      <div id="monthlyTable"></div>
-    </div>
-  </div>
-
-  <!-- YEARLY -->
-  <div class="view" id="view-yearly">
-    <div class="table-wrap">
-      <div class="table-header">
-        <h3 id="yearlyTitle">Yıllık Görünüm</h3>
-        <div class="controls">
-          <button onclick="changeYear(-1)">&#9664; Önceki</button>
-          <button onclick="changeYear(1)">Sonraki &#9654;</button>
-        </div>
-      </div>
-      <div id="yearlyTable"></div>
-    </div>
-    <div class="chart-wrap">
-      <h3>Aylık Kâr Dağılımı</h3>
-      <div class="chart" id="yearlyChart"></div>
-    </div>
-  </div>
-
-  <!-- HISTORY -->
-  <div class="view" id="view-history">
-    <div class="table-wrap">
-      <div class="table-header">
-        <h3>Tüm Kayıtlar</h3>
-        <div class="controls">
-          <button onclick="App.sortAsc=!App.sortAsc;renderHistory();updateSortBtn()" id="sortBtn">&#9650; Yeni &rarr; Eski</button>
-        </div>
-      </div>
-      <div id="historyTable"></div>
-    </div>
-  </div>
-</main>
-
-<!-- EDIT MODAL -->
+<!-- Edit Modal -->
 <div class="modal-overlay" id="editModal">
   <div class="modal">
-    <h3>Satışı Düzenle</h3>
-    <div class="form-group">
-      <label>Tarih</label>
-      <input type="date" id="editDate" readonly style="cursor:not-allowed">
-    </div>
-    <div class="form-group">
-      <label>Nazlı (adet)</label>
-      <input type="number" id="editNazli" min="0">
-    </div>
-    <div class="form-group">
-      <label>Kaltun (adet)</label>
-      <input type="number" id="editKaltun" min="0">
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-outline btn-sm" onclick="closeEditModal()">İptal</button>
-      <button class="btn btn-danger btn-sm" onclick="confirmDelete()">Sil</button>
-      <button class="btn btn-primary btn-sm" onclick="saveEdit()">Kaydet</button>
+    <h3>Düzenle</h3>
+    <div class="fg"><label>Tarih</label><input type="date" id="edtDate" readonly style="opacity:.7"></div>
+    <div class="fg"><label>Nazlı</label><input type="number" id="edtN" min="0"></div>
+    <div class="fg"><label>Kaltun</label><input type="number" id="edtK" min="0"></div>
+    <div class="modal-acts">
+      <button class="btn btn-o" onclick="clEd()">İptal</button>
+      <button class="btn btn-d" onclick="cfDel()">Sil</button>
+      <button class="btn btn-p" onclick="svEd()">Kaydet</button>
     </div>
   </div>
 </div>
 
-<!-- SYNC MODAL -->
+<!-- Sync Modal -->
 <div class="modal-overlay" id="syncModal">
-  <div class="modal" style="max-width:440px">
-    <h3>☁ Bulut Senkronizasyon</h3>
-    <p style="font-size:.82rem;color:var(--text2);margin-bottom:16px;line-height:1.5">
-      Tüm cihazlarda aynı veriyi kullanmak için GitHub üzerinden senkronize edin.
-      Token bir kere girilir, sadece sizin cihazınızda saklanır.
-    </p>
-    <div class="form-group">
+  <div class="modal">
+    <h3>&#9729; Senkronizasyon</h3>
+    <div class="fg">
       <label>GitHub Token</label>
-      <input type="password" id="syncToken" placeholder="github_pat_......" style="font-family:monospace;font-size:.8rem">
-      <div style="font-size:.68rem;color:var(--text3);margin-top:4px">
-        <a href="https://github.com/settings/tokens" target="_blank" style="color:var(--primary);text-decoration:none">Token oluştur</a>
-        · "repo" izni vermeyi unutmayın
-      </div>
+      <input type="password" id="syncTok" placeholder="ghp_......" style="font-family:monospace;font-size:.8rem">
+      <div style="font-size:.65rem;color:var(--txt3);margin-top:4px"><a href="https://github.com/settings/tokens" target="_blank" style="color:var(--prm)">Token oluştur</a> · repo izni</div>
     </div>
-    <div style="display:flex;gap:10px;margin-bottom:10px">
-      <button class="btn btn-primary btn-sm" onclick="App.sync.push()" style="flex:1">☁ GitHub'a Yükle</button>
-      <button class="btn btn-outline btn-sm" onclick="App.sync.pull()" style="flex:1">☁ GitHub'dan İndir</button>
+    <div style="display:flex;gap:8px;margin-bottom:8px">
+      <button class="btn btn-p" onclick="App.syn.push()" style="flex:1;padding:11px">&#9729; Yükle</button>
+      <button class="btn btn-o" onclick="App.syn.pull()" style="flex:1;padding:11px">&#9729; İndir</button>
     </div>
-    <div id="syncStatus" style="font-size:.78rem;color:var(--text3);text-align:center;padding:6px;border-radius:6px;background:var(--bg)"></div>
-    <div class="modal-actions">
-      <button class="btn btn-outline btn-sm" onclick="App.closeSyncModal()">Kapat</button>
-    </div>
+    <div id="syncSt" style="font-size:.75rem;color:var(--txt3);text-align:center;padding:6px;border-radius:8px;background:var(--srf2)"></div>
+    <div class="modal-acts"><button class="btn btn-o" onclick="clSync()">Kapat</button></div>
   </div>
 </div>
 
-<!-- TOAST -->
-<div class="toast-container" id="toastContainer"></div>
+<!-- Toast -->
+<div class="toast-container" id="tstC"></div>
 
 <script>
 const App = {
-  products: {
-    nazli: { alis: 70, satis: 130, name: 'Nazlı' },
-    kaltun: { alis: 100, satis: 150, name: 'Kaltun' }
-  },
-  sales: {},
-  currentView: 'dashboard',
-  monthlyDate: new Date(),
-  yearlyDate: new Date(),
-  sortAsc: false,
-  editingDate: null,
-  AYLAR: ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'],
-  sync: {
-    token: '',
-    sha: null,
-    repo: 'toprakefeguvenc/damacana-takip',
-    path: 'data.json',
+  prd: { n: { al:70, sa:130, nm:'Nazlı' }, k: { al:100, sa:150, nm:'Kaltun' } },
+  sls: {}, cv: 'dash', md: new Date(), yd: new Date(), sa: false, ed: null,
+  AY: ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'],
+  _sg: false,
 
-    loadToken() { this.token = localStorage.getItem('syncToken') || ''; return this.token },
-    saveToken(t) { this.token = t; localStorage.setItem('syncToken', t) },
-
-    getToken() {
-      return document.getElementById('syncToken').value.trim() || this.token
-    },
-
+  syn: {
+    tok: '', sha: null, repo: 'toprakefeguvenc/damacana-takip', path: 'data.json',
+    ldTok() { this.tok = localStorage.getItem('st')||''; return this.tok },
+    svTok(t) { this.tok = t; localStorage.setItem('st', t) },
+    gTok() { return document.getElementById('syncTok').value.trim() || this.tok },
     async push() {
-      const t = this.getToken()
-      if (!t) { showToast('Önce GitHub Token girin', 'error'); return }
-      this.saveToken(t)
-      App.syncStatus('Gönderiliyor...')
-      document.getElementById('syncBtn').className = 'sync-btn syncing'
-      const data = btoa(unescape(encodeURIComponent(JSON.stringify(App.sales, null, 2))))
+      const t = this.gTok(); if (!t) { tst('Token girin','err'); return }
+      this.svTok(t); App.syncSt('Gönderiliyor...'); dot('sg')
+      const data = btoa(unescape(encodeURIComponent(JSON.stringify(App.sls,null,2))))
       try {
         let sha = null
-        const getR = await fetch('https://api.github.com/repos/' + this.repo + '/contents/' + this.path, {
-          headers: { Authorization: 'Bearer ' + t }
-        })
-        if (getR.ok) { const g = await getR.json(); sha = g.sha }
-        const body = { message: 'Sync ' + new Date().toISOString().slice(0,10), content: data }
-        if (sha) body.sha = sha
-        const r = await fetch('https://api.github.com/repos/' + this.repo + '/contents/' + this.path, {
-          method: 'PUT',
-          headers: { Authorization: 'Bearer ' + t, 'Content-Type': 'application/json' },
-          body: JSON.stringify(body)
-        })
+        const gr = await fetch('https://api.github.com/repos/'+this.repo+'/contents/'+this.path,{headers:{Authorization:'Bearer '+t}})
+        if (gr.ok) { const gj = await gr.json(); sha = gj.sha }
+        const body = {message:'Sync '+new Date().toISOString().slice(0,10),content:data}; if (sha) body.sha = sha
+        const r = await fetch('https://api.github.com/repos/'+this.repo+'/contents/'+this.path,{method:'PUT',headers:{Authorization:'Bearer '+t,'Content-Type':'application/json'},body:JSON.stringify(body)})
         const j = await r.json()
-        if (r.ok) { this.sha = j.content.sha; App.syncStatus('✔ Son senkron: ' + new Date().toLocaleTimeString('tr-TR'), 'ok'); document.getElementById('syncBtn').className = 'sync-btn synced'; showToast('Veriler GitHub\'a yüklendi', 'success') }
-        else { App.syncStatus('Hata: ' + (j.message || r.status), 'err'); document.getElementById('syncBtn').className = 'sync-btn error'; showToast('Senkron hatası: ' + (j.message || r.status), 'error') }
-      } catch(e) { App.syncStatus('Bağlantı hatası', 'err'); document.getElementById('syncBtn').className = 'sync-btn error'; showToast('Bağlantı hatası', 'error') }
+        if (r.ok) { this.sha = j.content.sha; App.syncSt('✔ '+new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})); dot('ok'); tst('Yüklendi','scs') }
+        else { App.syncSt(j.message||'Hata'); dot('er'); tst('Hata: '+(j.message||r.status),'err') }
+      } catch(e) { App.syncSt('Bağlantı hatası'); dot('er'); tst('Bağlantı hatası','err') }
     },
-
     async pull() {
-      const t = this.getToken()
-      if (!t) { showToast('Önce GitHub Token girin', 'error'); return }
-      this.saveToken(t)
-      App.syncStatus('İndiriliyor...')
-      document.getElementById('syncBtn').className = 'sync-btn syncing'
+      const t = this.gTok(); if (!t) { tst('Token girin','err'); return }
+      this.svTok(t); App.syncSt('İndiriliyor...'); dot('sg')
       try {
-        const r = await fetch('https://api.github.com/repos/' + this.repo + '/contents/' + this.path, {
-          headers: { Authorization: 'Bearer ' + t }
-        })
-        if (r.status === 404) { App.syncStatus('Henüz yüklenmemiş, önce GitHub\'a yükleyin', ''); document.getElementById('syncBtn').className = 'sync-btn'; showToast('Bulut boş, önce yükleme yapın', 'error'); return }
-        if (!r.ok) { App.syncStatus('Hata: ' + r.status, 'err'); document.getElementById('syncBtn').className = 'sync-btn error'; showToast('İndirme hatası', 'error'); return }
-        const j = await r.json()
-        this.sha = j.sha
+        const r = await fetch('https://api.github.com/repos/'+this.repo+'/contents/'+this.path,{headers:{Authorization:'Bearer '+t}})
+        if (r.status===404) { App.syncSt('Bulut boş, önce yükleyin'); dot('off'); tst('Bulut boş','err'); return }
+        if (!r.ok) { App.syncSt('Hata '+r.status); dot('er'); tst('İndirme hatası','err'); return }
+        const j = await r.json(); this.sha = j.sha
         const raw = decodeURIComponent(escape(atob(j.content)))
-        const data = JSON.parse(raw)
-        App._syncing = true
-        App.sales = data
-        App.save()
-        App._syncing = false
-        App.renderAll()
-        App.syncStatus('✔ Son güncelleme: ' + new Date().toLocaleTimeString('tr-TR'), 'ok'); document.getElementById('syncBtn').className = 'sync-btn synced'; showToast('Veriler buluttan alındı', 'success')
-      } catch(e) { App.syncStatus('Bağlantı hatası', 'err'); document.getElementById('syncBtn').className = 'sync-btn error'; showToast('İndirme hatası', 'error') }
+        App._sg = true; App.sls = JSON.parse(raw); App.sv(); App._sg = false; App.rndAll()
+        App.syncSt('✔ '+new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})); dot('ok'); tst('Güncellendi','scs')
+      } catch(e) { App.syncSt('Bağlantı hatası'); dot('er'); tst('İndirme hatası','err') }
     }
   },
 
   init() {
-    this.loadTheme()
-    this.load()
-    this.setupDateInput()
-    this.updateLiveCalc()
-    this.renderAll()
-    document.getElementById('currentDate').textContent =
-      new Date().toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
-    document.getElementById('saleDate').addEventListener('input', () => this.updateLiveCalc())
-    document.getElementById('qtyNazli').addEventListener('input', () => this.updateLiveCalc())
-    document.getElementById('qtyKaltun').addEventListener('input', () => this.updateLiveCalc())
-    this.sync.loadToken()
-    if (this.sync.token) setTimeout(() => this.sync.pull(), 500)
+    this.ldThm(); this.ld()
+    const n = new Date()
+    document.getElementById('hdrDate').textContent = n.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'})
+    document.getElementById('saleDate').value = n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0')
+    document.getElementById('saleDate').oninput = () => this.lcUpd()
+    document.getElementById('qtyN').oninput = () => this.lcUpd()
+    document.getElementById('qtyK').oninput = () => this.lcUpd()
+    this.lcUpd(); this.rndAll()
+    this.syn.ldTok(); if (this.syn.tok) setTimeout(() => this.syn.pull(), 600)
+    document.getElementById('syncModal').onclick = e => { if (e.target.id==='syncModal') clSync() }
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{})
   },
 
-  load() {
+  ldThm() { const s = localStorage.getItem('th')||'light'; document.body.setAttribute('data-theme',s); document.getElementById('themeMeta').content = s==='dark'?'#0b1120':'#0e7c8a' },
+  toggleTheme() { const n = document.body.getAttribute('data-theme')==='dark'?'light':'dark'; document.body.setAttribute('data-theme',n); localStorage.setItem('th',n); document.getElementById('themeMeta').content = n==='dark'?'#0b1120':'#0e7c8a' },
+
+  ld() {
     try {
-      const d = localStorage.getItem('damacanaSales')
-      this.sales = d ? JSON.parse(d) : {}
-    } catch(e) { this.sales = {} }
+      let d = localStorage.getItem('ds')
+      if (!d) { const old = localStorage.getItem('damacanaSales'); if (old) { d = old; localStorage.setItem('ds', old); localStorage.removeItem('damacanaSales') } }
+      this.sls = d ? JSON.parse(d) : {}
+      let changed = false
+      for (const [k,v] of Object.entries(this.sls)) { if (v.nazli!==undefined) { this.sls[k]={n:v.nazli||0,k:v.kaltun||0}; changed=true } }
+      if (changed) localStorage.setItem('ds', JSON.stringify(this.sls))
+    } catch(e) { this.sls = {} }
+  },
+  sv() { try { localStorage.setItem('ds', JSON.stringify(this.sls)) } catch(e) { tst('Kayıt hatası','err') } if (!this._sg&&(this.syn.tok||localStorage.getItem('st'))) setTimeout(()=>this.syn.push(),400) },
+
+  cd(d) { const s=this.sls[d]; if(!s) return {n:0,k:0,t:0,r:0,c:0,p:0}; const n=(s.n||s.nazli||0),k=(s.k||s.kaltun||0); return {n,k,t:n+k,r:n*this.prd.n.sa+k*this.prd.k.sa,c:n*this.prd.n.al+k*this.prd.k.al,p:n*this.prd.n.sa+k*this.prd.k.sa-n*this.prd.n.al-k*this.prd.k.al} },
+  cm(y,m) { let r={n:0,k:0,t:0,r:0,c:0,p:0}; const ds=new Date(y,m,0).getDate(); for(let d=1;d<=ds;d++){const c=this.cd(y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0')); r.n+=c.n;r.k+=c.k;r.t+=c.t;r.r+=c.r;r.c+=c.c;r.p+=c.p} return r },
+  cy(y) { let r={n:0,k:0,t:0,r:0,c:0,p:0}; for(let m=1;m<=12;m++){const c=this.cm(y,m); r.n+=c.n;r.k+=c.k;r.t+=c.t;r.r+=c.r;r.c+=c.c;r.p+=c.p} return r },
+  gd(y,m) { return new Date(y,m,0).getDate() },
+
+  swV(v) {
+    this.cv=v; const names={dash:'Ana Sayfa',add:'Satış Ekle',monthly:'Aylık',yearly:'Yıllık',history:'Geçmiş'}
+    document.querySelectorAll('.pg').forEach(p=>p.classList.remove('act'))
+    const el = document.getElementById('pg-'+v); if (el) el.classList.add('act')
+    document.querySelectorAll('.bnav a').forEach(a=>a.classList.toggle('act',a.dataset.v===v))
+    if (v==='dash') this.rndDash()
+    else if (v==='monthly') this.rndM()
+    else if (v==='yearly') this.rndY()
+    else if (v==='history') this.rndH()
   },
 
-  _syncing: false,
-  save() {
-    try { localStorage.setItem('damacanaSales', JSON.stringify(this.sales)) }
-    catch(e) { showToast('Veri kaydedilemedi!', 'error') }
-    if (!this._syncing) setTimeout(() => { if (this.sync.token || localStorage.getItem('syncToken')) this.sync.push() }, 300)
+  rndAll() { this.rndDash(); this.rndM(); this.rndY(); this.rndH() },
+
+  rndDash() {
+    const n=new Date(), t=this.cd(n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0'))
+    const m=this.cm(n.getFullYear(),n.getMonth()+1), y=this.cy(n.getFullYear())
+    document.getElementById('dashCrds').innerHTML =
+      '<div class="crd"><div class="crd-top"><div class="crd-icn" style="background:var(--prmglow);color:var(--prm)">📅</div><span class="crd-lbl">Bugün</span></div><div class="crd-val">'+fmt(t.t)+'</div><div class="crd-sub">Nazlı '+t.n+' · Kaltun '+t.k+' · Ciro '+fm(t.r)+'</div></div>'+
+      '<div class="crd"><div class="crd-top"><div class="crd-icn" style="background:var(--prmglow);color:var(--prm)">📊</div><span class="crd-lbl">Bu Ay ('+this.AY[n.getMonth()]+')</span></div><div class="crd-val">'+fmt(m.t)+'</div><div class="crd-sub">Nazlı '+m.n+' · Kaltun '+m.k+' · Ciro '+fm(m.r)+'</div></div>'+
+      '<div class="crd scs"><div class="crd-top"><div class="crd-icn">💰</div><span class="crd-lbl">Bu Yıl ('+n.getFullYear()+')</span></div><div class="crd-val">'+fm(y.p)+'</div><div class="crd-sub">'+y.t+' adet · Ciro '+fm(y.r)+'</div></div>'
+    const es = Object.entries(this.sls).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,8)
+    if (!es.length) { document.getElementById('dashList').innerHTML='<div class="emp"><div class="ei">📋</div><h4>Kayıt yok</h4><p>Satış eklemek için alt menüden "Ekle"ye dokunun.</p></div>'; return }
+    let h='<div class="tbl-scrl"><table><thead><tr><th>Tarih</th><th>Nazlı</th><th>Kaltun</th><th class="tar">Kâr</th></tr></thead><tbody>'
+    for (const [d,s] of es) { const c = this.cd(d); h+='<tr onclick="opEd(\''+d+'\')"><td>'+d+'</td><td>'+c.n+'</td><td>'+c.k+'</td><td class="tar t-scs">+'+fm(c.p)+'</td></tr>' }
+    h+='</tbody></table></div>'; document.getElementById('dashList').innerHTML=h
   },
 
-  setupDateInput() {
-    const d = new Date()
-    document.getElementById('saleDate').value =
-      d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0')
+  lcUpd() {
+    const n=parseInt(document.getElementById('qtyN').value)||0, k=parseInt(document.getElementById('qtyK').value)||0
+    const r=n*this.prd.n.sa+k*this.prd.k.sa, c=n*this.prd.n.al+k*this.prd.k.al, p=r-c
+    document.getElementById('lcn').textContent=n; document.getElementById('lck').textContent=k
+    document.getElementById('lcr').textContent=fm(r); document.getElementById('lcm').textContent=fm(c)
+    document.getElementById('lk').textContent=(p>=0?'+':'')+fm(p); document.getElementById('lk').style.color=p>=0?'var(--scs)':'var(--scl)'
   },
 
-  // ---- Theme ----
-  loadTheme() {
-    const saved = localStorage.getItem('damacanaTheme') || 'light'
-    document.body.setAttribute('data-theme', saved)
-    document.querySelector('meta[name="theme-color"]').content = saved === 'dark' ? '#0b1120' : '#0e7c8a'
+  svSl() {
+    const d=document.getElementById('saleDate').value; if(!d){tst('Tarih seçin','err');return}
+    const n=parseInt(document.getElementById('qtyN').value)||0, k=parseInt(document.getElementById('qtyK').value)||0
+    if(!n&&!k){tst('Adet girin','err');return}
+    if(this.sls[d]&&!confirm(d+' için kayıt var. Güncellensin?')) return
+    this.sls[d]={n,k}; this.sv(); this.rndAll()
+    document.getElementById('qtyN').value='0'; document.getElementById('qtyK').value='0'; this.lcUpd()
+    tst('✔ '+d+' kaydedildi','scs')
   },
 
-  toggleTheme() {
-    const current = document.body.getAttribute('data-theme')
-    const next = current === 'dark' ? 'light' : 'dark'
-    document.body.setAttribute('data-theme', next)
-    localStorage.setItem('damacanaTheme', next)
-    document.querySelector('meta[name="theme-color"]').content = next === 'dark' ? '#0b1120' : '#0e7c8a'
-  },
-
-  // ---- Calculations ----
-  calcDay(dateStr) {
-    const s = this.sales[dateStr]
-    if (!s) return { nazli:0, kaltun:0, total:0, revenue:0, cost:0, profit:0 }
-    const n = s.nazli || 0, k = s.kaltun || 0
-    const rev = n * this.products.nazli.satis + k * this.products.kaltun.satis
-    const cost = n * this.products.nazli.alis + k * this.products.kaltun.alis
-    return { nazli:n, kaltun:k, total:n+k, revenue:rev, cost:cost, profit:rev-cost }
-  },
-
-  calcMonth(year, month) {
-    let r = { nazli:0, kaltun:0, total:0, revenue:0, cost:0, profit:0 }
-    const days = new Date(year, month, 0).getDate()
-    for (let d = 1; d <= days; d++) {
-      const key = `${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`
-      const c = this.calcDay(key)
-      r.nazli += c.nazli; r.kaltun += c.kaltun; r.total += c.total
-      r.revenue += c.revenue; r.cost += c.cost; r.profit += c.profit
+  rndM() {
+    const y=this.md.getFullYear(), m=this.md.getMonth()+1
+    document.getElementById('mTitle').textContent=this.AY[m-1]+' '+y
+    const ds=this.gd(y,m); let h='<div class="tbl-scrl"><table><thead><tr><th>Gün</th><th>N</th><th>K</th><th>Top</th><th class="tar">Ciro</th><th class="tar">Kâr</th></tr></thead><tbody>'
+    let tot={n:0,k:0,t:0,r:0,p:0}
+    for(let d=1;d<=ds;d++){const key=y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');const c=this.cd(key);tot.n+=c.n;tot.k+=c.k;tot.t+=c.t;tot.r+=c.r;tot.p+=c.p
+      h+=c.t?'<tr onclick="opEd(\''+key+'\')"><td>'+String(d).padStart(2,'0')+'</td><td>'+c.n+'</td><td>'+c.k+'</td><td>'+c.t+'</td><td class="tar">'+fm(c.r)+'</td><td class="tar t-scs">+'+fm(c.p)+'</td></tr>':'<tr><td class="t-mut">'+String(d).padStart(2,'0')+'</td><td class="t-mut">-</td><td class="t-mut">-</td><td class="t-mut">-</td><td class="tar t-mut">-</td><td class="tar t-mut">-</td></tr>'
     }
-    return r
+    h+='<tr style="font-weight:700"><td>Toplam</td><td>'+tot.n+'</td><td>'+tot.k+'</td><td>'+tot.t+'</td><td class="tar">'+fm(tot.r)+'</td><td class="tar t-scs">+'+fm(tot.p)+'</td></tr>'
+    h+='</tbody></table></div>'; document.getElementById('mTable').innerHTML=h
   },
 
-  calcYear(year) {
-    let r = { nazli:0, kaltun:0, total:0, revenue:0, cost:0, profit:0 }
-    for (let m = 1; m <= 12; m++) {
-      const c = this.calcMonth(year, m)
-      r.nazli += c.nazli; r.kaltun += c.kaltun; r.total += c.total
-      r.revenue += c.revenue; r.cost += c.cost; r.profit += c.profit
+  rndY() {
+    const y=this.yd.getFullYear()
+    document.getElementById('yTitle').textContent=y
+    let h='<div class="tbl-scrl"><table><thead><tr><th>Ay</th><th>N</th><th>K</th><th>Top</th><th class="tar">Ciro</th><th class="tar">Kâr</th></tr></thead><tbody>'
+    let tot={n:0,k:0,t:0,r:0,p:0}; const ps=[]
+    for(let m=1;m<=12;m++){const c=this.cm(y,m);tot.n+=c.n;tot.k+=c.k;tot.t+=c.t;tot.r+=c.r;tot.p+=c.p;ps.push(c.p)
+      h+=c.t?'<tr><td>'+this.AY[m-1]+'</td><td>'+c.n+'</td><td>'+c.k+'</td><td>'+c.t+'</td><td class="tar">'+fm(c.r)+'</td><td class="tar t-scs">+'+fm(c.p)+'</td></tr>':'<tr><td class="t-mut">'+this.AY[m-1]+'</td><td class="t-mut">-</td><td class="t-mut">-</td><td class="t-mut">-</td><td class="tar t-mut">-</td><td class="tar t-mut">-</td></tr>'
     }
-    return r
+    h+='<tr style="font-weight:700"><td>Toplam</td><td>'+tot.n+'</td><td>'+tot.k+'</td><td>'+tot.t+'</td><td class="tar">'+fm(tot.r)+'</td><td class="tar t-scs">+'+fm(tot.p)+'</td></tr>'
+    h+='</tbody></table></div>'; document.getElementById('yTable').innerHTML=h
+    const mx=Math.max(...ps,1); let ch=''
+    for(let m=0;m<12;m++){const p=ps[m], pct=p>0?Math.max((p/mx)*100,6):6;ch+='<div class="bar'+(p===0?' emp':'')+'" style="height:'+pct+'%"><span class="bv">'+(p>0?fm(p):'')+'</span><span class="bl">'+this.AY[m].slice(0,3)+'</span></div>'}
+    document.getElementById('yChart').innerHTML=ch
   },
 
-  getMonthDays(year, month) {
-    return new Date(year, month, 0).getDate()
+  rndH() {
+    const es=Object.entries(this.sls); if(!es.length){document.getElementById('hstTable').innerHTML='<div class="emp"><div class="ei">📋</div><h4>Kayıt yok</h4></div>';return}
+    es.sort((a,b)=>this.sa?a[0].localeCompare(b[0]):b[0].localeCompare(a[0]))
+    let h='<div class="tbl-scrl"><table><thead><tr><th>Tarih</th><th>N</th><th>K</th><th>Top</th><th class="tar">Ciro</th><th class="tar">Kâr</th><th class="tar" style="width:70px"></th></tr></thead><tbody>'
+    for(const[d,s]of es){const c=this.cd(d);h+='<tr><td>'+d+'</td><td>'+c.n+'</td><td>'+c.k+'</td><td>'+c.t+'</td><td class="tar">'+fm(c.r)+'</td><td class="tar t-scs">+'+fm(c.p)+'</td><td class="tar"><div class="acts"><button onclick="opEd(\''+d+'\')">&#9998;</button><button onclick="dlSl(\''+d+'\')" style="color:var(--scl)">&#128465;</button></div></td></tr>'}
+    h+='</tbody></table></div>'; document.getElementById('hstTable').innerHTML=h; this.hstBtn()
   },
 
-  // ---- View ----
-  switchView(view) {
-    this.currentView = view
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'))
-    document.getElementById('view-' + view).classList.add('active')
-    document.querySelectorAll('.nav a, .mobile-nav a').forEach(a => {
-      a.classList.toggle('active', a.dataset.view === view)
-    })
-    const titles = { dashboard:'Dashboard', add:'Satış Ekle', monthly:'Aylık Görünüm', yearly:'Yıllık Görünüm', history:'Geçmiş Kayıtlar' }
-    document.getElementById('viewTitle').textContent = titles[view] || ''
-    document.getElementById('sidebar').classList.remove('open')
-    if (view === 'dashboard') this.renderDashboard()
-    else if (view === 'monthly') this.renderMonthly()
-    else if (view === 'yearly') this.renderYearly()
-    else if (view === 'history') this.renderHistory()
-  },
+  hstBtn() { document.getElementById('hstBtn').innerHTML = (this.sa?'&#9650; Eski':'&#9650; Yeni')+'→'+(this.sa?'Yeni':'Eski') },
 
-  toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('open')
-  },
+  opEd(d) { this.ed=d; const s=this.sls[d]; if(!s)return; document.getElementById('edtDate').value=d; document.getElementById('edtN').value=s.n; document.getElementById('edtK').value=s.k; document.getElementById('editModal').classList.add('show') },
+  clEd() { document.getElementById('editModal').classList.remove('show'); this.ed=null },
+  svEd() { const d=this.ed; if(!d)return; const n=parseInt(document.getElementById('edtN').value)||0,k=parseInt(document.getElementById('edtK').value)||0; if(!n&&!k){if(confirm('Kayıt silinsin mi?'))this.dlSlD(d);return}; this.sls[d]={n,k}; this.sv(); this.clEd(); this.rndAll(); tst('✔ Güncellendi','scs') },
+  cfDel() { const d=this.ed; if(d&&confirm(d+' silinsin mi?')) this.dlSlD(d) },
+  dlSlD(d) { delete this.sls[d]; this.sv(); this.clEd(); this.rndAll(); tst('🗑 Silindi','scs') },
 
-  closeSidebar() {
-    document.getElementById('sidebar').classList.remove('open')
-  },
-
-  showSyncModal() {
-    document.getElementById('syncToken').value = App.sync.loadToken()
-    document.getElementById('syncStatus').textContent = localStorage.getItem('syncToken') ? '✔ Token kaydedildi. Yükle/İndir yapabilirsiniz.' : 'Token girmeden önce yükleme yapamazsınız.'
-    document.getElementById('syncModal').classList.add('show')
-  },
-
-  closeSyncModal() {
-    document.getElementById('syncModal').classList.remove('show')
-  },
-
-  syncStatus(msg, type) {
-    const el = document.getElementById('syncStatus')
-    el.textContent = msg
-    el.style.color = type === 'ok' ? 'var(--success)' : type === 'err' ? 'var(--danger)' : 'var(--text3)'
-  },
-
-  // ---- Dashboard ----
-  renderDashboard() {
-    const now = new Date()
-    const today = this.formatDate(now)
-    const monthSum = this.calcMonth(now.getFullYear(), now.getMonth() + 1)
-    const yearSum = this.calcYear(now.getFullYear())
-    const todaySum = this.calcDay(today)
-    document.getElementById('dashboardCards').innerHTML = `
-      <div class="card count">
-        <div class="card-icon">📅</div>
-        <div class="label">Bugün (${today})</div>
-        <div class="value">${fmt(todaySum.total)}</div>
-        <div class="sub">Nazlı ${todaySum.nazli} · Kaltun ${todaySum.kaltun} · Ciro ${fmtMoney(todaySum.revenue)}</div>
-      </div>
-      <div class="card revenue">
-        <div class="card-icon">📊</div>
-        <div class="label">Bu Ay (${this.AYLAR[now.getMonth()]})</div>
-        <div class="value">${fmt(monthSum.total)}</div>
-        <div class="sub">Nazlı ${monthSum.nazli} · Kaltun ${monthSum.kaltun} · Ciro ${fmtMoney(monthSum.revenue)}</div>
-      </div>
-      <div class="card profit">
-        <div class="card-icon">💰</div>
-        <div class="label">Bu Yıl (${now.getFullYear()})</div>
-        <div class="value">${fmtMoney(yearSum.profit)}</div>
-        <div class="sub">${yearSum.total} adet · Ciro ${fmtMoney(yearSum.revenue)}</div>
-      </div>
-    `
-    const entries = Object.entries(this.sales).sort((a,b) => b[0].localeCompare(a[0])).slice(0,10)
-    if (!entries.length) {
-      document.getElementById('recentSales').innerHTML =
-        '<div class="empty-state"><div class="empty-icon">📋</div><h4>Henüz satış kaydı yok</h4><p>İlk satışınızı eklemek için "Satış Ekle" bölümüne gidin.</p></div>'
-      return
-    }
-    let html = '<table><thead><tr><th>Tarih</th><th>Nazlı</th><th>Kaltun</th><th>Toplam</th><th class="text-right">Ciro</th><th class="text-right">Kâr</th></tr></thead><tbody>'
-    for (const [date, s] of entries) {
-      const c = this.calcDay(date)
-      html += `<tr style="cursor:pointer" onclick="openEdit('${date}')"><td>${date}</td><td>${c.nazli}</td><td>${c.kaltun}</td><td>${c.total}</td><td class="text-right">${fmtMoney(c.revenue)}</td><td class="text-right text-success">+${fmtMoney(c.profit)}</td></tr>`
-    }
-    html += '</tbody></table>'
-    document.getElementById('recentSales').innerHTML = html
-  },
-
-  // ---- Add ----
-  updateLiveCalc() {
-    const n = parseInt(document.getElementById('qtyNazli').value) || 0
-    const k = parseInt(document.getElementById('qtyKaltun').value) || 0
-    const rev = n * this.products.nazli.satis + k * this.products.kaltun.satis
-    const cost = n * this.products.nazli.alis + k * this.products.kaltun.alis
-    const profit = rev - cost
-    document.getElementById('lcNazli').textContent = n
-    document.getElementById('lcKaltun').textContent = k
-    document.getElementById('lcCiro').textContent = fmtMoney(rev)
-    document.getElementById('lcMaliyet').textContent = fmtMoney(cost)
-    document.getElementById('lcKar').textContent = (profit >= 0 ? '+' : '') + fmtMoney(profit)
-    document.getElementById('lcKar').style.color = profit >= 0 ? 'var(--success)' : 'var(--danger)'
-  },
-
-  saveSale() {
-    const date = document.getElementById('saleDate').value
-    if (!date) { showToast('Lütfen tarih seçin!', 'error'); return }
-    const n = parseInt(document.getElementById('qtyNazli').value) || 0
-    const k = parseInt(document.getElementById('qtyKaltun').value) || 0
-    if (n === 0 && k === 0) { showToast('En az bir adet girin!', 'error'); return }
-    if (this.sales[date]) {
-      if (!confirm(`Bu tarih için kayıt zaten var. Güncellemek istiyor musunuz?\n\nMevcut: Nazlı ${this.sales[date].nazli}, Kaltun ${this.sales[date].kaltun}`)) return
-    }
-    this.sales[date] = { nazli: n, kaltun: k }
-    this.save()
-    this.renderAll()
-    document.getElementById('qtyNazli').value = '0'
-    document.getElementById('qtyKaltun').value = '0'
-    this.updateLiveCalc()
-    this.setupDateInput()
-    showToast(`✔ ${date} — ${n} Nazlı, ${k} Kaltun kaydedildi`, 'success')
-  },
-
-  // ---- Monthly ----
-  renderMonthly() {
-    const y = this.monthlyDate.getFullYear(), m = this.monthlyDate.getMonth() + 1
-    document.getElementById('monthlyTitle').textContent = `${this.AYLAR[m-1]} ${y}`
-    const days = this.getMonthDays(y, m)
-    let html = '<table><thead><tr><th>Gün</th><th>Nazlı</th><th>Kaltun</th><th>Toplam</th><th class="text-right">Ciro</th><th class="text-right">Kâr</th></tr></thead><tbody>'
-    let total = { nazli:0, kaltun:0, total:0, revenue:0, profit:0 }
-    for (let d = 1; d <= days; d++) {
-      const key = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`
-      const c = this.calcDay(key)
-      total.nazli += c.nazli; total.kaltun += c.kaltun; total.total += c.total
-      total.revenue += c.revenue; total.profit += c.profit
-      if (c.total === 0) {
-        html += `<tr><td class="text-muted">${String(d).padStart(2,'0')}</td><td class="text-muted">-</td><td class="text-muted">-</td><td class="text-muted">-</td><td class="text-muted text-right">-</td><td class="text-muted text-right">-</td></tr>`
-      } else {
-        html += `<tr style="cursor:pointer" onclick="openEdit('${key}')"><td>${String(d).padStart(2,'0')}</td><td>${c.nazli}</td><td>${c.kaltun}</td><td>${c.total}</td><td class="text-right">${fmtMoney(c.revenue)}</td><td class="text-right text-success">+${fmtMoney(c.profit)}</td></tr>`
-      }
-    }
-    html += `<tr style="font-weight:700"><td>Toplam</td><td>${total.nazli}</td><td>${total.kaltun}</td><td>${total.total}</td><td class="text-right">${fmtMoney(total.revenue)}</td><td class="text-right text-success">+${fmtMoney(total.profit)}</td></tr>`
-    html += '</tbody></table>'
-    document.getElementById('monthlyTable').innerHTML = html
-  },
-
-  changeMonth(delta) {
-    this.monthlyDate.setMonth(this.monthlyDate.getMonth() + delta)
-    this.renderMonthly()
-  },
-
-  // ---- Yearly ----
-  renderYearly() {
-    const y = this.yearlyDate.getFullYear()
-    document.getElementById('yearlyTitle').textContent = `${y} Yılı`
-    let html = '<table><thead><tr><th>Ay</th><th>Nazlı</th><th>Kaltun</th><th>Toplam</th><th class="text-right">Ciro</th><th class="text-right">Kâr</th></tr></thead><tbody>'
-    let total = { nazli:0, kaltun:0, total:0, revenue:0, profit:0 }
-    const profits = []
-    for (let m = 1; m <= 12; m++) {
-      const c = this.calcMonth(y, m)
-      total.nazli += c.nazli; total.kaltun += c.kaltun; total.total += c.total
-      total.revenue += c.revenue; total.profit += c.profit
-      profits.push(c.profit)
-      if (c.total === 0) {
-        html += `<tr><td class="text-muted">${this.AYLAR[m-1]}</td><td class="text-muted">-</td><td class="text-muted">-</td><td class="text-muted">-</td><td class="text-muted text-right">-</td><td class="text-muted text-right">-</td></tr>`
-      } else {
-        html += `<tr><td>${this.AYLAR[m-1]}</td><td>${c.nazli}</td><td>${c.kaltun}</td><td>${c.total}</td><td class="text-right">${fmtMoney(c.revenue)}</td><td class="text-right text-success">+${fmtMoney(c.profit)}</td></tr>`
-      }
-    }
-    html += `<tr style="font-weight:700"><td>Toplam</td><td>${total.nazli}</td><td>${total.kaltun}</td><td>${total.total}</td><td class="text-right">${fmtMoney(total.revenue)}</td><td class="text-right text-success">+${fmtMoney(total.profit)}</td></tr>`
-    html += '</tbody></table>'
-    document.getElementById('yearlyTable').innerHTML = html
-
-    const maxP = Math.max(...profits, 1)
-    let chartHtml = ''
-    for (let m = 0; m < 12; m++) {
-      const p = profits[m]
-      const pct = p > 0 ? Math.max((p / maxP) * 100, 6) : 6
-      chartHtml += `<div class="bar ${p === 0 ? 'empty' : ''}" style="height:${pct}%">
-        <span class="bar-val">${p > 0 ? fmtMoney(p) : ''}</span>
-        <span class="bar-lbl">${this.AYLAR[m].slice(0,3)}</span>
-      </div>`
-    }
-    document.getElementById('yearlyChart').innerHTML = chartHtml
-  },
-
-  changeYear(delta) {
-    this.yearlyDate.setFullYear(this.yearlyDate.getFullYear() + delta)
-    this.renderYearly()
-  },
-
-  // ---- History ----
-  renderHistory() {
-    const entries = Object.entries(this.sales)
-    if (!entries.length) {
-      document.getElementById('historyTable').innerHTML =
-        '<div class="empty-state"><div class="empty-icon">📋</div><h4>Henüz kayıt yok</h4></div>'
-      return
-    }
-    entries.sort((a,b) => this.sortAsc ? a[0].localeCompare(b[0]) : b[0].localeCompare(a[0]))
-    let html = '<table><thead><tr><th>Tarih</th><th>Nazlı</th><th>Kaltun</th><th>Toplam</th><th class="text-right">Ciro</th><th class="text-right">Kâr</th><th class="text-right" style="width:80px">İşlem</th></tr></thead><tbody>'
-    for (const [date, s] of entries) {
-      const c = this.calcDay(date)
-      html += `<tr>
-        <td>${date}</td><td>${c.nazli}</td><td>${c.kaltun}</td><td>${c.total}</td>
-        <td class="text-right">${fmtMoney(c.revenue)}</td>
-        <td class="text-right text-success">+${fmtMoney(c.profit)}</td>
-        <td class="text-right">
-          <div class="actions">
-            <button class="btn btn-ghost btn-icon" onclick="openEdit('${date}')" title="Düzenle">
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            </button>
-            <button class="btn btn-ghost btn-icon" onclick="deleteSale('${date}')" title="Sil" style="color:var(--danger)">
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-            </button>
-          </div>
-        </td>
-      </tr>`
-    }
-    html += '</tbody></table>'
-    document.getElementById('historyTable').innerHTML = html
-    this.updateSortBtn()
-  },
-
-  updateSortBtn() {
-    document.getElementById('sortBtn').innerHTML = this.sortAsc
-      ? '&#9650; Eski &rarr; Yeni'
-      : '&#9650; Yeni &rarr; Eski'
-  },
-
-  // ---- Edit / Delete ----
-  openEdit(date) {
-    this.editingDate = date
-    const s = this.sales[date]
-    if (!s) return
-    document.getElementById('editDate').value = date
-    document.getElementById('editNazli').value = s.nazli
-    document.getElementById('editKaltun').value = s.kaltun
-    document.getElementById('editModal').classList.add('show')
-  },
-
-  closeEditModal() {
-    document.getElementById('editModal').classList.remove('show')
-    this.editingDate = null
-  },
-
-  saveEdit() {
-    const date = this.editingDate
-    if (!date) return
-    const n = parseInt(document.getElementById('editNazli').value) || 0
-    const k = parseInt(document.getElementById('editKaltun').value) || 0
-    if (n === 0 && k === 0) {
-      if (confirm('Her iki ürün de 0. Kaydı silmek ister misiniz?')) { this.deleteSaleData(date) }
-      return
-    }
-    this.sales[date] = { nazli: n, kaltun: k }
-    this.save()
-    this.closeEditModal()
-    this.renderAll()
-    showToast(`✔ ${date} güncellendi`, 'success')
-  },
-
-  confirmDelete() {
-    const date = this.editingDate
-    if (!date) return
-    if (confirm(`${date} kaydını silmek istediğinize emin misiniz?`)) { this.deleteSaleData(date) }
-  },
-
-  deleteSaleData(date) {
-    delete this.sales[date]
-    this.save()
-    this.closeEditModal()
-    this.renderAll()
-    showToast(`🗑 ${date} silindi`, 'success')
-  },
-
-  deleteSale(date) {
-    if (confirm(`${date} kaydını silmek istediğinize emin misiniz?`)) { this.deleteSaleData(date) }
-  },
-
-  renderAll() {
-    this.renderDashboard()
-    this.renderMonthly()
-    this.renderYearly()
-    this.renderHistory()
-  },
-
-  formatDate(d) {
-    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0')
-  }
+  syncSt(m,t) { const el=document.getElementById('syncSt'); el.textContent=m; if(t==='ok')el.style.color='var(--scs)';else if(t==='er')el.style.color='var(--scl)';else el.style.color='var(--txt3)' },
+  showSyncModal() { document.getElementById('syncTok').value=this.syn.ldTok(); const h=localStorage.getItem('st')?'✔ Token var, yükle/indir yapabilirsiniz':'Token girin'; this.syncSt(h); document.getElementById('syncModal').classList.add('show') }
 }
 
-// ---- Globals ----
-function fmt(n) { return Number(n).toLocaleString('tr-TR') }
-function fmtMoney(n) { return Number(n).toLocaleString('tr-TR') + '₺' }
-function switchView(v) { App.switchView(v) }
-function adjustQty(p,d) {
-  const el = document.getElementById(p === 'nazli' ? 'qtyNazli' : 'qtyKaltun')
-  let v = parseInt(el.value) || 0
-  el.value = Math.max(0, v + d)
-  App.updateLiveCalc()
-}
-function saveSale() { App.saveSale() }
-function changeMonth(d) { App.changeMonth(d) }
-function changeYear(d) { App.changeYear(d) }
-function openEdit(d) { App.openEdit(d) }
-function deleteSale(d) { App.deleteSale(d) }
-function closeEditModal() { App.closeEditModal() }
-function saveEdit() { App.saveEdit() }
-function confirmDelete() { App.confirmDelete() }
-function showSyncModal() { App.showSyncModal() }
-function renderHistory() { App.renderHistory() }
-function updateSortBtn() { App.updateSortBtn() }
+function fmt(n){return Number(n).toLocaleString('tr-TR')}
+function fm(n){return fmt(n)+'₺'}
+function swV(v){App.swV(v)}
+function adjQty(p,d){const el=document.getElementById(p==='n'?'qtyN':'qtyK'); let v=parseInt(el.value)||0; el.value=Math.max(0,v+d); App.lcUpd()}
+function saveSale(){App.svSl()}
+function chMonth(d){App.md.setMonth(App.md.getMonth()+d);App.rndM()}
+function chYear(d){App.yd.setFullYear(App.yd.getFullYear()+d);App.rndY()}
+function opEd(d){App.opEd(d)}
+function dlSl(d){if(confirm(d+' silinsin mi?'))App.dlSlD(d)}
+function clEd(){App.clEd()}
+function svEd(){App.svEd()}
+function cfDel(){App.cfDel()}
+function clSync(){document.getElementById('syncModal').classList.remove('show')}
 
-function showToast(msg, type) {
-  const c = document.getElementById('toastContainer')
-  const t = document.createElement('div')
-  t.className = 'toast ' + (type === 'success' ? 'success' : type === 'error' ? 'error' : '')
-  t.innerHTML = `<span>${msg}</span><button class="toast-close" onclick="this.parentElement.remove()">&#10005;</button>`
-  c.appendChild(t)
-  setTimeout(() => { if (t.parentElement) t.remove() }, 4000)
+function dot(s){const e=document.getElementById('syncDot'); e.className='syncd '+s}
+
+function tst(msg,tp){
+  const c=document.getElementById('tstC'), t=document.createElement('div')
+  t.className='toast'+(tp==='scs'?' scs':tp==='err'?' err':'')
+  t.innerHTML='<span>'+msg+'</span><button class="tc" onclick="this.parentElement.remove()">&#10005;</button>'
+  c.appendChild(t); setTimeout(()=>{if(t.parentElement)t.remove()},3500)
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  App.init()
-  document.querySelector('.main').addEventListener('click', () => App.closeSidebar())
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(() => {})
-  }
-  document.getElementById('syncModal').addEventListener('click', e => { if (e.target === document.getElementById('syncModal')) App.closeSyncModal() })
-})
+document.addEventListener('DOMContentLoaded',()=>{App.init()})
 </script>
 </body>
 </html>
