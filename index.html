@@ -897,8 +897,12 @@ const App = {
     loadToken() { this.token = localStorage.getItem('syncToken') || ''; return this.token },
     saveToken(t) { this.token = t; localStorage.setItem('syncToken', t) },
 
+    getToken() {
+      return document.getElementById('syncToken').value.trim() || this.token
+    },
+
     async push() {
-      const t = document.getElementById('syncToken').value.trim()
+      const t = this.getToken()
       if (!t) { showToast('Önce GitHub Token girin', 'error'); return }
       this.saveToken(t)
       App.syncStatus('Gönderiliyor...')
@@ -919,7 +923,7 @@ const App = {
     },
 
     async pull() {
-      const t = document.getElementById('syncToken').value.trim()
+      const t = this.getToken()
       if (!t) { showToast('Önce GitHub Token girin', 'error'); return }
       this.saveToken(t)
       App.syncStatus('İndiriliyor...')
@@ -934,8 +938,10 @@ const App = {
         this.sha = j.sha
         const raw = decodeURIComponent(escape(atob(j.content)))
         const data = JSON.parse(raw)
+        App._syncing = true
         App.sales = data
         App.save()
+        App._syncing = false
         App.renderAll()
         App.syncStatus('✔ Son güncelleme: ' + new Date().toLocaleTimeString('tr-TR'), 'ok'); document.getElementById('syncBtn').className = 'sync-btn synced'; showToast('Veriler buluttan alındı', 'success')
       } catch(e) { App.syncStatus('Bağlantı hatası', 'err'); document.getElementById('syncBtn').className = 'sync-btn error'; showToast('İndirme hatası', 'error') }
@@ -964,10 +970,11 @@ const App = {
     } catch(e) { this.sales = {} }
   },
 
+  _syncing: false,
   save() {
     try { localStorage.setItem('damacanaSales', JSON.stringify(this.sales)) }
     catch(e) { showToast('Veri kaydedilemedi!', 'error') }
-    setTimeout(() => { if (this.sync.token || localStorage.getItem('syncToken')) this.sync.push() }, 300)
+    if (!this._syncing) setTimeout(() => { if (this.sync.token || localStorage.getItem('syncToken')) this.sync.push() }, 300)
   },
 
   setupDateInput() {
