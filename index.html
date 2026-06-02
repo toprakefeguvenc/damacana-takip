@@ -209,6 +209,24 @@ body{
   color:var(--primary);
   box-shadow:0 4px 16px var(--primary-glow)
 }
+.sync-btn{
+  width:44px;height:44px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:var(--bg-card);
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:color .2s,border-color .2s;
+  color:var(--text3);
+  font-size:1.1rem;
+  position:relative
+}
+.sync-btn:hover{border-color:var(--primary);color:var(--primary)}
+.sync-btn.synced{color:var(--success)}
+.sync-btn.error{color:var(--danger)}
+.sync-btn.syncing{animation:pulse 1.2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.sync-status{font-size:.7rem;color:var(--text3);margin-left:4px}
 .theme-toggle .icon-sun,.theme-toggle .icon-moon{transition:opacity .2s;position:absolute}
 [data-theme="light"] .theme-toggle .icon-moon{opacity:0}
 [data-theme="light"] .theme-toggle .icon-sun{opacity:1}
@@ -696,6 +714,7 @@ td .actions{display:flex;gap:4px;justify-content:flex-end}
     </div>
     <div style="display:flex;align-items:center;gap:12px">
       <div class="date" id="currentDate"></div>
+      <button class="sync-btn" id="syncBtn" onclick="App.showSyncModal()" title="Senkronizasyon">&#9729;</button>
       <button class="theme-toggle" onclick="App.toggleTheme()" title="Tema değiştir">
         <span class="icon-sun">&#9788;</span>
         <span class="icon-moon">&#9790;</span>
@@ -826,6 +845,33 @@ td .actions{display:flex;gap:4px;justify-content:flex-end}
   </div>
 </div>
 
+<!-- SYNC MODAL -->
+<div class="modal-overlay" id="syncModal">
+  <div class="modal" style="max-width:440px">
+    <h3>☁ Bulut Senkronizasyon</h3>
+    <p style="font-size:.82rem;color:var(--text2);margin-bottom:16px;line-height:1.5">
+      Tüm cihazlarda aynı veriyi kullanmak için GitHub üzerinden senkronize edin.
+      Token bir kere girilir, sadece sizin cihazınızda saklanır.
+    </p>
+    <div class="form-group">
+      <label>GitHub Token</label>
+      <input type="password" id="syncToken" placeholder="github_pat_......" style="font-family:monospace;font-size:.8rem">
+      <div style="font-size:.68rem;color:var(--text3);margin-top:4px">
+        <a href="https://github.com/settings/tokens" target="_blank" style="color:var(--primary);text-decoration:none">Token oluştur</a>
+        · "repo" izni vermeyi unutmayın
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:10px">
+      <button class="btn btn-primary btn-sm" onclick="App.sync.push()" style="flex:1">☁ GitHub'a Yükle</button>
+      <button class="btn btn-outline btn-sm" onclick="App.sync.pull()" style="flex:1">☁ GitHub'dan İndir</button>
+    </div>
+    <div id="syncStatus" style="font-size:.78rem;color:var(--text3);text-align:center;padding:6px;border-radius:6px;background:var(--bg)"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" onclick="App.closeSyncModal()">Kapat</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast-container" id="toastContainer"></div>
 
@@ -842,6 +888,59 @@ const App = {
   sortAsc: false,
   editingDate: null,
   AYLAR: ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'],
+  sync: {
+    token: '',
+    sha: null,
+    repo: 'toprakefeguvenc/damacana-takip',
+    path: 'data.json',
+
+    loadToken() { this.token = localStorage.getItem('syncToken') || ''; return this.token },
+    saveToken(t) { this.token = t; localStorage.setItem('syncToken', t) },
+
+    async push() {
+      const t = document.getElementById('syncToken').value.trim()
+      if (!t) { showToast('Önce GitHub Token girin', 'error'); return }
+      this.saveToken(t)
+      App.syncStatus('Gönderiliyor...')
+      document.getElementById('syncBtn').className = 'sync-btn syncing'
+      const data = btoa(unescape(encodeURIComponent(JSON.stringify(App.sales, null, 2))))
+      let body = { message: 'Sync ' + new Date().toISOString().slice(0,10), content: data }
+      if (this.sha) body.sha = this.sha
+      try {
+        const r = await fetch('https://api.github.com/repos/' + this.repo + '/contents/' + this.path, {
+          method: 'PUT',
+          headers: { Authorization: 'Bearer ' + t, 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        })
+        const j = await r.json()
+        if (r.ok) { this.sha = j.content.sha; App.syncStatus('✔ Son senkron: ' + new Date().toLocaleTimeString('tr-TR'), 'ok'); document.getElementById('syncBtn').className = 'sync-btn synced'; showToast('Veriler GitHub\'a yüklendi', 'success') }
+        else { App.syncStatus('Hata: ' + (j.message || r.status), 'err'); document.getElementById('syncBtn').className = 'sync-btn error'; showToast('Senkron hatası: ' + (j.message || r.status), 'error') }
+      } catch(e) { App.syncStatus('Bağlantı hatası', 'err'); document.getElementById('syncBtn').className = 'sync-btn error'; showToast('Bağlantı hatası', 'error') }
+    },
+
+    async pull() {
+      const t = document.getElementById('syncToken').value.trim()
+      if (!t) { showToast('Önce GitHub Token girin', 'error'); return }
+      this.saveToken(t)
+      App.syncStatus('İndiriliyor...')
+      document.getElementById('syncBtn').className = 'sync-btn syncing'
+      try {
+        const r = await fetch('https://api.github.com/repos/' + this.repo + '/contents/' + this.path, {
+          headers: { Authorization: 'Bearer ' + t }
+        })
+        if (r.status === 404) { App.syncStatus('Henüz yüklenmemiş, önce GitHub\'a yükleyin', ''); document.getElementById('syncBtn').className = 'sync-btn'; showToast('Bulut boş, önce yükleme yapın', 'error'); return }
+        if (!r.ok) { App.syncStatus('Hata: ' + r.status, 'err'); document.getElementById('syncBtn').className = 'sync-btn error'; showToast('İndirme hatası', 'error'); return }
+        const j = await r.json()
+        this.sha = j.sha
+        const raw = decodeURIComponent(escape(atob(j.content)))
+        const data = JSON.parse(raw)
+        App.sales = data
+        App.save()
+        App.renderAll()
+        App.syncStatus('✔ Son güncelleme: ' + new Date().toLocaleTimeString('tr-TR'), 'ok'); document.getElementById('syncBtn').className = 'sync-btn synced'; showToast('Veriler buluttan alındı', 'success')
+      } catch(e) { App.syncStatus('Bağlantı hatası', 'err'); document.getElementById('syncBtn').className = 'sync-btn error'; showToast('İndirme hatası', 'error') }
+    }
+  },
 
   init() {
     this.loadTheme()
@@ -854,6 +953,8 @@ const App = {
     document.getElementById('saleDate').addEventListener('input', () => this.updateLiveCalc())
     document.getElementById('qtyNazli').addEventListener('input', () => this.updateLiveCalc())
     document.getElementById('qtyKaltun').addEventListener('input', () => this.updateLiveCalc())
+    this.sync.loadToken()
+    if (this.sync.token) setTimeout(() => this.sync.pull(), 500)
   },
 
   load() {
@@ -866,6 +967,7 @@ const App = {
   save() {
     try { localStorage.setItem('damacanaSales', JSON.stringify(this.sales)) }
     catch(e) { showToast('Veri kaydedilemedi!', 'error') }
+    setTimeout(() => { if (this.sync.token || localStorage.getItem('syncToken')) this.sync.push() }, 300)
   },
 
   setupDateInput() {
@@ -948,6 +1050,22 @@ const App = {
 
   closeSidebar() {
     document.getElementById('sidebar').classList.remove('open')
+  },
+
+  showSyncModal() {
+    document.getElementById('syncToken').value = App.sync.loadToken()
+    document.getElementById('syncStatus').textContent = localStorage.getItem('syncToken') ? '✔ Token kaydedildi. Yükle/İndir yapabilirsiniz.' : 'Token girmeden önce yükleme yapamazsınız.'
+    document.getElementById('syncModal').classList.add('show')
+  },
+
+  closeSyncModal() {
+    document.getElementById('syncModal').classList.remove('show')
+  },
+
+  syncStatus(msg, type) {
+    const el = document.getElementById('syncStatus')
+    el.textContent = msg
+    el.style.color = type === 'ok' ? 'var(--success)' : type === 'err' ? 'var(--danger)' : 'var(--text3)'
   },
 
   // ---- Dashboard ----
@@ -1213,6 +1331,7 @@ function deleteSale(d) { App.deleteSale(d) }
 function closeEditModal() { App.closeEditModal() }
 function saveEdit() { App.saveEdit() }
 function confirmDelete() { App.confirmDelete() }
+function showSyncModal() { App.showSyncModal() }
 function renderHistory() { App.renderHistory() }
 function updateSortBtn() { App.updateSortBtn() }
 
@@ -1231,6 +1350,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {})
   }
+  document.getElementById('syncModal').addEventListener('click', e => { if (e.target === document.getElementById('syncModal')) App.closeSyncModal() })
 })
 </script>
 </body>
