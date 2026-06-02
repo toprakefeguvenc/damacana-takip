@@ -908,9 +908,14 @@ const App = {
       App.syncStatus('Gönderiliyor...')
       document.getElementById('syncBtn').className = 'sync-btn syncing'
       const data = btoa(unescape(encodeURIComponent(JSON.stringify(App.sales, null, 2))))
-      let body = { message: 'Sync ' + new Date().toISOString().slice(0,10), content: data }
-      if (this.sha) body.sha = this.sha
       try {
+        let sha = null
+        const getR = await fetch('https://api.github.com/repos/' + this.repo + '/contents/' + this.path, {
+          headers: { Authorization: 'Bearer ' + t }
+        })
+        if (getR.ok) { const g = await getR.json(); sha = g.sha }
+        const body = { message: 'Sync ' + new Date().toISOString().slice(0,10), content: data }
+        if (sha) body.sha = sha
         const r = await fetch('https://api.github.com/repos/' + this.repo + '/contents/' + this.path, {
           method: 'PUT',
           headers: { Authorization: 'Bearer ' + t, 'Content-Type': 'application/json' },
