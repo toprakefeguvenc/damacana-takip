@@ -1,0 +1,8 @@
+node_modules/
+.capacitor/
+android/
+.idea/
+*.apk
+*.aab
+.DS_Store
+Thumbs.db

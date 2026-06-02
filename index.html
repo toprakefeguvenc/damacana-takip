@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Damacana Takip</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0e7c8a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Damacana">
+<link rel="apple-touch-icon" href="icon.svg">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* Theme - Light (default) */
+[data-theme="light"],:root{
+  --bg: #f0f5fa;
+  --bg-card: rgba(255,255,255,0.82);
+  --bg-glass: rgba(255,255,255,0.6);
+  --bg-sidebar: rgba(255,255,255,0.85);
+  --text: #0b1a2e;
+  --text2: #3b526d;
+  --text3: #8496b0;
+  --border: rgba(0,0,0,0.06);
+  --primary: #0e7c8a;
+  --primary-dark: #0a5f6b;
+  --primary-glow: rgba(14,124,138,0.12);
+  --primary-glass: rgba(14,124,138,0.08);
+  --success: #0b9b6b;
+  --success-bg: rgba(11,155,107,0.1);
+  --danger: #d14545;
+  --danger-bg: rgba(209,69,69,0.1);
+  --warning: #c9902a;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.02);
+  --shadow: 0 4px 16px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.02);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.03);
+  --shadow-xl: 0 24px 64px rgba(0,0,0,0.08);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+  --nav-w: 240px;
+  --font: 'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+  --bg-noise: none;
+  --scrollbar-thumb: #cbd5e1;
+  --scrollbar-track: transparent;
+}
+
+/* Theme - Dark */
+[data-theme="dark"]{
+  --bg: #0b1120;
+  --bg-card: rgba(18,26,45,0.85);
+  --bg-glass: rgba(18,26,45,0.5);
+  --bg-sidebar: rgba(11,17,32,0.92);
+  --text: #e2eaf5;
+  --text2: #94a9c5;
+  --text3: #4d6380;
+  --border: rgba(255,255,255,0.06);
+  --primary: #3bc9c9;
+  --primary-dark: #2bb0b0;
+  --primary-glow: rgba(59,201,201,0.12);
+  --primary-glass: rgba(59,201,201,0.06);
+  --success: #3bcf9e;
+  --success-bg: rgba(59,207,158,0.1);
+  --danger: #ef6b6b;
+  --danger-bg: rgba(239,107,107,0.1);
+  --warning: #f0b34b;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.15), 0 1px 2px rgba(0,0,0,0.1);
+  --shadow: 0 4px 16px rgba(0,0,0,0.2), 0 2px 8px rgba(0,0,0,0.12);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.25), 0 4px 16px rgba(0,0,0,0.15);
+  --shadow-xl: 0 24px 64px rgba(0,0,0,0.35);
+  --bg-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  --scrollbar-thumb: #2a3850;
+  --scrollbar-track: transparent;
+}
+
+/* Base */
+html{font-size:15px;scroll-behavior:smooth}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--scrollbar-track)}
+::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text3)}
+
+/* Sidebar */
+.sidebar{
+  position:fixed;top:0;left:0;
+  width:var(--nav-w);height:100vh;
+  background:var(--bg-sidebar);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  z-index:100;
+  transition:transform .25s;
+  overflow:hidden
+}
+.sidebar-brand{
+  padding:28px 22px 22px;
+  display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--border);
+  position:relative
+}
+.sidebar-brand .logo-wrap{
+  width:40px;height:40px;
+  border-radius:12px;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  box-shadow:0 4px 12px var(--primary-glow)
+}
+.sidebar-brand .logo-wrap svg{color:#fff}
+.sidebar-brand h1{
+  font-size:1.05rem;font-weight:700;color:var(--text);
+  letter-spacing:-.3px;line-height:1.2
+}
+.sidebar-brand span{
+  font-size:.6rem;color:var(--text3);
+  display:block;font-weight:500;letter-spacing:.3px;text-transform:uppercase;
+  margin-top:1px
+}
+.nav{flex:1;padding:14px 10px;display:flex;flex-direction:column;gap:2px}
+.nav a{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 14px;
+  border-radius:var(--radius-sm);
+  color:var(--text2);
+  text-decoration:none;
+  font-size:.88rem;font-weight:500;
+  cursor:pointer;user-select:none;
+  transition:all .2s;
+  position:relative
+}
+.nav a:hover{color:var(--text);background:var(--primary-glass)}
+.nav a.active{
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:#fff;font-weight:600;
+  box-shadow:0 4px 16px var(--primary-glow)
+}
+.nav a svg{flex-shrink:0}
+.nav a .nav-badge{
+  margin-left:auto;
+  font-size:.6rem;
+  background:rgba(255,255,255,.15);
+  padding:2px 8px;
+  border-radius:10px;
+  color:inherit
+}
+.nav a.active .nav-badge{background:rgba(255,255,255,.2)}
+.sidebar-footer{
+  padding:16px 22px;
+  border-top:1px solid var(--border);
+  font-size:.65rem;color:var(--text3);
+  display:flex;align-items:center;justify-content:space-between
+}
+.sidebar-footer .theme-dot{
+  width:8px;height:8px;border-radius:50%;
+  display:inline-block;
+  transition:background .35s
+}
+[data-theme="light"] .sidebar-footer .theme-dot{background:var(--warning)}
+[data-theme="dark"] .sidebar-footer .theme-dot{background:var(--primary)}
+
+/* Main Content */
+.main{
+  margin-left:var(--nav-w);flex:1;
+  min-height:100vh;
+  padding:32px 36px 100px;
+  max-width:1260px;width:100%;
+  transition:margin-left .35s
+}
+.main-header{
+  display:flex;align-items:center;
+  justify-content:space-between;
+  margin-bottom:32px
+}
+.main-header .left{display:flex;align-items:center;gap:14px}
+.main-header h2{
+  font-size:1.5rem;font-weight:700;
+  letter-spacing:-.5px;background:linear-gradient(135deg,var(--text),var(--text2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text
+}
+.main-header .date{font-size:.82rem;color:var(--text3);font-weight:500}
+
+/* Theme Toggle */
+.theme-toggle{
+  width:44px;height:44px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:var(--bg-card);
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:color .2s,border-color .2s;
+  color:var(--text2);
+  font-size:1.2rem;
+  position:relative
+}
+.theme-toggle:hover{
+  border-color:var(--primary);
+  color:var(--primary);
+  box-shadow:0 4px 16px var(--primary-glow)
+}
+.theme-toggle .icon-sun,.theme-toggle .icon-moon{transition:opacity .2s;position:absolute}
+[data-theme="light"] .theme-toggle .icon-moon{opacity:0}
+[data-theme="light"] .theme-toggle .icon-sun{opacity:1}
+[data-theme="dark"] .theme-toggle .icon-sun{opacity:0}
+[data-theme="dark"] .theme-toggle .icon-moon{opacity:1}
+
+/* Views */
+.view{display:none}
+.view.active{display:block}
+
+/* Glass Card */
+.glass{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  transition:box-shadow .25s;
+  position:relative;overflow:hidden
+}
+
+/* Dashboard Cards */
+.cards{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+  margin-bottom:28px
+}
+.card{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:22px 24px;
+  transition:box-shadow .2s,transform .2s;
+  position:relative;overflow:hidden
+}
+.card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  opacity:0;transition:opacity .3s
+}
+.card:hover::after{opacity:1}
+.card:hover{
+  box-shadow:var(--shadow-lg)
+}
+.card .card-icon{
+  width:40px;height:40px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;
+  font-size:1.1rem
+}
+.card.count .card-icon{background:var(--primary-glass);color:var(--primary)}
+.card.count::after{background:linear-gradient(90deg,var(--primary),var(--primary-dark))}
+.card.revenue .card-icon{background:var(--success-bg);color:var(--success)}
+.card.revenue::after{background:linear-gradient(90deg,var(--success),#0b9b6b)}
+.card.profit .card-icon{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;box-shadow:0 4px 12px var(--primary-glow)}
+.card.profit::after{background:linear-gradient(90deg,var(--primary),#3bc9c9)}
+.card .label{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin-bottom:2px}
+.card .value{font-size:1.75rem;font-weight:800;letter-spacing:-.6px;line-height:1.1}
+.card .sub{font-size:.78rem;color:var(--text2);margin-top:5px}
+.card.profit .value{color:var(--success)}
+.card.revenue .value{color:var(--success)}
+.card.count .value{color:var(--text)}
+
+/* Add Sale */
+.add-form{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:28px 32px;
+  max-width:500px
+}
+.add-form .form-title{
+  font-size:1.1rem;font-weight:700;margin-bottom:20px;
+  letter-spacing:-.3px
+}
+.form-group{margin-bottom:18px}
+.form-group label{
+  display:block;font-size:.78rem;font-weight:600;
+  color:var(--text2);margin-bottom:6px;letter-spacing:.2px
+}
+.form-group input[type=date],.form-group input[type=number]{
+  width:100%;padding:10px 14px;
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  font-size:.92rem;font-family:var(--font);
+  color:var(--text);
+  background:var(--bg);
+  transition:all .25s;outline:none
+}
+.form-group input:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px var(--primary-glow)
+}
+.qty-row{
+  display:flex;align-items:center;gap:14px;
+  padding:12px 16px;
+  background:var(--bg);
+  border-radius:var(--radius-sm);
+  border:1px solid var(--border)
+}
+.qty-row label{white-space:nowrap;margin-bottom:0;min-width:70px;font-size:.85rem;color:var(--text)}
+.qty-input{display:flex;align-items:center;gap:6px}
+.qty-input button{
+  width:34px;height:34px;
+  border:1.5px solid var(--border);
+  border-radius:8px;
+  background:var(--bg-card);
+  color:var(--text2);
+  font-size:1.1rem;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+  font-family:var(--font);line-height:1
+}
+.qty-input button:hover{
+  border-color:var(--primary);color:var(--primary);
+  background:var(--primary-glass)
+}
+.qty-input input{width:60px;text-align:center;padding:7px 4px;font-weight:600}
+.product-info{font-size:.7rem;color:var(--text3);margin-top:3px;margin-left:0}
+
+/* Live Calc */
+.live-calc{
+  background:var(--primary-glass);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:16px 20px;
+  margin:20px 0;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px 20px
+}
+.live-calc .item{font-size:.82rem;color:var(--text2)}
+.live-calc .item strong{color:var(--text);font-weight:700}
+.live-calc .profit{
+  grid-column:1/-1;
+  font-size:1.15rem;font-weight:700;
+  text-align:center;
+  padding-top:6px;
+  border-top:1px solid var(--border);
+  margin-top:2px
+}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:11px 24px;border:none;
+  border-radius:var(--radius-sm);
+  font-size:.88rem;font-weight:600;font-family:var(--font);
+  cursor:pointer;transition:all .25s;text-decoration:none;
+  justify-content:center
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:#fff;
+  box-shadow:0 4px 12px var(--primary-glow)
+}
+.btn-primary:hover{box-shadow:0 8px 24px var(--primary-glow)}
+.btn-success{
+  background:linear-gradient(135deg,var(--success),#0b9b6b);
+  color:#fff;
+  box-shadow:0 4px 14px rgba(11,155,107,0.25)
+}
+.btn-success:hover{box-shadow:0 8px 24px rgba(11,155,107,0.3)}
+.btn-danger{
+  background:linear-gradient(135deg,var(--danger),#b53a3a);
+  color:#fff
+}
+.btn-danger:hover{box-shadow:0 4px 16px rgba(209,69,69,.25)}
+.btn-outline{
+  background:transparent;
+  border:1.5px solid var(--border);
+  color:var(--text2)
+}
+.btn-outline:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-glass)}
+.btn-ghost{
+  background:transparent;border:none;
+  color:var(--text3);padding:8px 12px
+}
+.btn-ghost:hover{color:var(--text);background:var(--primary-glass)}
+.btn-sm{padding:8px 16px;font-size:.8rem}
+.btn-icon{
+  width:34px;height:34px;padding:0;
+  border-radius:8px;
+  display:inline-flex;align-items:center;justify-content:center
+}
+
+/* Tables */
+.table-wrap{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden
+}
+.table-wrap .table-header{
+  display:flex;align-items:center;
+  justify-content:space-between;
+  padding:18px 24px;
+  border-bottom:1px solid var(--border);
+  flex-wrap:wrap;gap:10px
+}
+.table-wrap .table-header h3{font-size:.95rem;font-weight:600}
+.table-wrap .table-header .controls{display:flex;align-items:center;gap:8px}
+.table-wrap .table-header .controls button{
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:var(--radius-xs);padding:7px 14px;
+  cursor:pointer;font-size:.8rem;font-weight:500;
+  color:var(--text2);font-family:var(--font);
+  transition:all .2s;
+  display:flex;align-items:center;gap:5px
+}
+.table-wrap .table-header .controls button:hover{
+  border-color:var(--primary);color:var(--primary)
+}
+table{width:100%;border-collapse:collapse}
+th,td{
+  padding:11px 18px;text-align:left;
+  font-size:.84rem;border-bottom:1px solid var(--border)
+}
+th{
+  font-weight:600;color:var(--text3);
+  font-size:.7rem;text-transform:uppercase;
+  letter-spacing:.5px;background:var(--bg)
+}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--primary-glass)}
+td:last-child{text-align:right}
+th:last-child{text-align:right}
+td .actions{display:flex;gap:4px;justify-content:flex-end}
+.text-right{text-align:right!important}
+.text-success{color:var(--success);font-weight:600}
+.text-muted{color:var(--text3);font-weight:400}
+
+/* Chart */
+.chart-wrap{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:24px;margin-top:16px
+}
+.chart-wrap h3{font-size:.92rem;font-weight:600;margin-bottom:18px}
+.chart{
+  display:flex;align-items:flex-end;
+  gap:5px;height:170px;
+  padding:18px 4px 24px;
+  position:relative
+}
+.chart .bar{
+  flex:1;display:flex;
+  flex-direction:column;align-items:center;
+  justify-content:flex-end;position:relative;
+  min-height:6px;border-radius:4px 4px 0 0;
+  transition:height .3s ease;
+  background:linear-gradient(180deg,var(--primary),var(--primary-dark));
+  box-shadow:0 0 12px var(--primary-glow);
+  cursor:pointer
+}
+.chart .bar:hover{opacity:.85}
+.chart .bar .bar-val{
+  position:absolute;top:-17px;
+  font-size:.6rem;font-weight:700;
+  color:var(--text2);white-space:nowrap
+}
+.chart .bar .bar-lbl{
+  position:absolute;bottom:-20px;
+  font-size:.62rem;color:var(--text3);
+  white-space:nowrap;font-weight:500
+}
+.chart .bar.empty{
+  background:var(--border);
+  min-height:6px;box-shadow:none
+}
+.chart .bar.empty .bar-lbl{bottom:-20px}
+.chart .bar.empty .bar-val{display:none}
+
+/* Modal */
+.modal-overlay{
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,.25);
+  z-index:1000;display:none;
+  align-items:center;justify-content:center;
+  animation:fadeIn .2s
+}
+.modal-overlay.show{display:flex}
+.modal{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  width:90%;max-width:400px;
+  box-shadow:var(--shadow-xl);
+  padding:28px 28px 24px;
+  animation:slideUp .25s ease
+}
+.modal h3{font-size:1rem;font-weight:700;margin-bottom:20px}
+.modal .form-group{margin-bottom:14px}
+.modal .modal-actions{
+  display:flex;gap:10px;
+  justify-content:flex-end;
+  margin-top:22px;padding-top:16px;
+  border-top:1px solid var(--border)
+}
+
+/* Toast */
+.toast-container{
+  position:fixed;top:20px;right:20px;
+  z-index:2000;
+  display:flex;flex-direction:column;gap:8px;
+  pointer-events:none
+}
+.toast{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:12px 18px;
+  box-shadow:var(--shadow-lg);
+  display:flex;align-items:center;gap:10px;
+  font-size:.85rem;font-weight:500;
+  animation:slideToast .25s ease;
+  pointer-events:all;
+  min-width:260px;
+  border-left:3px solid var(--primary)
+}
+.toast.success{border-left-color:var(--success)}
+.toast.error{border-left-color:var(--danger)}
+.toast .toast-close{
+  cursor:pointer;color:var(--text3);
+  font-size:1.2rem;margin-left:auto;
+  background:none;border:none;
+  font-family:var(--font);padding:0 4px
+}
+
+/* Empty state */
+.empty-state{
+  text-align:center;padding:52px 24px;
+  color:var(--text3)
+}
+.empty-state .empty-icon{
+  width:56px;height:56px;
+  margin:0 auto 14px;
+  border-radius:50%;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem
+}
+.empty-state h4{font-size:1rem;font-weight:600;color:var(--text2);margin-bottom:4px}
+.empty-state p{font-size:.85rem;color:var(--text3)}
+
+/* Animations */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes slideToast{from{transform:translateX(40px);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* Mobile */
+.mobile-nav{display:none}
+.menu-toggle{display:none}
+
+/* Responsive */
+@media(max-width:860px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0;padding:20px 16px 80px}
+  .cards{grid-template-columns:1fr}
+  .sidebar-footer,.sidebar-brand .brand-sub{display:none}
+  .card .value{font-size:1.4rem}
+  .mobile-nav{
+    display:flex;
+    position:fixed;bottom:0;left:0;right:0;
+    background:var(--bg-sidebar);
+    border-top:1px solid var(--border);
+    z-index:100;
+    padding:4px 0 env(safe-area-inset-bottom,4px);
+    justify-content:space-around
+  }
+  .mobile-nav a{
+    display:flex;flex-direction:column;
+    align-items:center;gap:1px;
+    padding:6px 6px;
+    border-radius:var(--radius-xs);
+    color:var(--text3);text-decoration:none;
+    font-size:.55rem;font-weight:600;
+    cursor:pointer;transition:all .2s;
+    min-width:0;letter-spacing:.2px
+  }
+  .mobile-nav a svg{width:20px;height:20px}
+  .mobile-nav a.active{color:var(--primary)}
+  .mobile-nav a span{margin-top:1px}
+  .menu-toggle{
+    display:flex!important;
+    background:var(--bg-card);
+    border:1px solid var(--border);
+    border-radius:10px;
+    font-size:1.3rem;
+    cursor:pointer;
+    color:var(--text2);
+    padding:8px 10px;
+    font-family:var(--font)
+  }
+  .live-calc{grid-template-columns:1fr;text-align:center}
+  .add-form{max-width:100%}
+  .table-wrap{overflow-x:auto}
+  table{min-width:620px}
+  .main-header{margin-bottom:20px}
+  .main-header h2{font-size:1.2rem}
+}
+
+@media(max-width:480px){
+  .card{padding:18px 18px}
+  .card .value{font-size:1.3rem}
+  .modal{padding:20px 18px;width:93%}
+  .add-form{padding:20px 18px}
+  .qty-row{padding:10px 12px;flex-wrap:wrap;gap:10px}
+  .product-info{margin-left:0}
+}
+</style>
+</head>
+<body data-theme="light">
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="logo-wrap">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C12 2 5 11 5 15c0 3.9 3.1 7 7 7s7-3.1 7-7c0-4-7-13-7-13z"/><path d="M12 10v4"/><circle cx="12" cy="6" r=".8" fill="currentColor"/></svg>
+    </div>
+    <div>
+      <h1>Damacana Takip</h1>
+      <span>Nazlı &amp; Kaltun</span>
+    </div>
+  </div>
+  <nav class="nav">
+    <a data-view="dashboard" class="active" onclick="switchView('dashboard')">
+      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>
+      Dashboard
+    </a>
+    <a data-view="add" onclick="switchView('add')">
+      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="12" y1="8" x2="12" y2="16"/></svg>
+      Satış Ekle
+    </a>
+    <a data-view="monthly" onclick="switchView('monthly')">
+      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+      Aylık
+    </a>
+    <a data-view="yearly" onclick="switchView('yearly')">
+      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="13" width="4" height="7" rx="1"/><rect x="10" y="9" width="4" height="11" rx="1"/><rect x="16" y="5" width="4" height="15" rx="1"/></svg>
+      Yıllık
+    </a>
+    <a data-view="history" onclick="switchView('history')">
+      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+      Geçmiş
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <span>v1.0 · offline</span>
+    <span class="theme-dot"></span>
+  </div>
+</aside>
+
+<!-- Mobile Bottom Nav -->
+<nav class="mobile-nav" id="mobileNav">
+  <a data-view="dashboard" class="active" onclick="switchView('dashboard')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>
+    <span>Ana Sayfa</span>
+  </a>
+  <a data-view="add" onclick="switchView('add')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="12" y1="8" x2="12" y2="16"/></svg>
+    <span>Ekle</span>
+  </a>
+  <a data-view="monthly" onclick="switchView('monthly')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+    <span>Aylık</span>
+  </a>
+  <a data-view="yearly" onclick="switchView('yearly')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="13" width="4" height="7" rx="1"/><rect x="10" y="9" width="4" height="11" rx="1"/><rect x="16" y="5" width="4" height="15" rx="1"/></svg>
+    <span>Yıllık</span>
+  </a>
+  <a data-view="history" onclick="switchView('history')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+    <span>Geçmiş</span>
+  </a>
+</nav>
+
+<!-- Main Content -->
+<main class="main">
+  <div class="main-header">
+    <div class="left">
+      <button class="menu-toggle" onclick="App.toggleSidebar()">&#9776;</button>
+      <h2 id="viewTitle">Dashboard</h2>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="date" id="currentDate"></div>
+      <button class="theme-toggle" onclick="App.toggleTheme()" title="Tema değiştir">
+        <span class="icon-sun">&#9788;</span>
+        <span class="icon-moon">&#9790;</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="view active" id="view-dashboard">
+    <div class="cards" id="dashboardCards"></div>
+    <div class="table-wrap">
+      <div class="table-header"><h3>Son Satışlar</h3></div>
+      <div id="recentSales"></div>
+    </div>
+  </div>
+
+  <!-- ADD -->
+  <div class="view" id="view-add">
+    <div class="add-form">
+      <div class="form-title">&#x1F4CB; Yeni Satış Kaydı</div>
+      <div class="form-group">
+        <label>Tarih</label>
+        <input type="date" id="saleDate">
+      </div>
+      <div class="form-group">
+        <label>Nazlı</label>
+        <div class="qty-row">
+          <div class="qty-input">
+            <button onclick="adjustQty('nazli',-1)">−</button>
+            <input type="number" id="qtyNazli" value="0" min="0">
+            <button onclick="adjustQty('nazli',1)">+</button>
+          </div>
+        </div>
+        <div class="product-info">Alış 70₺ → Satış 130₺ · Birim Kâr: 60₺</div>
+      </div>
+      <div class="form-group">
+        <label>Kaltun</label>
+        <div class="qty-row">
+          <div class="qty-input">
+            <button onclick="adjustQty('kaltun',-1)">−</button>
+            <input type="number" id="qtyKaltun" value="0" min="0">
+            <button onclick="adjustQty('kaltun',1)">+</button>
+          </div>
+        </div>
+        <div class="product-info">Alış 100₺ → Satış 150₺ · Birim Kâr: 50₺</div>
+      </div>
+      <div class="live-calc" id="liveCalc">
+        <span class="item">Nazlı: <strong id="lcNazli">0</strong> adet</span>
+        <span class="item">Kaltun: <strong id="lcKaltun">0</strong> adet</span>
+        <span class="item">Ciro: <strong id="lcCiro">0₺</strong></span>
+        <span class="item">Maliyet: <strong id="lcMaliyet">0₺</strong></span>
+        <span class="profit">Kâr: <span id="lcKar">0₺</span></span>
+      </div>
+      <button class="btn btn-success" onclick="saveSale()" style="width:100%">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Satışı Kaydet
+      </button>
+    </div>
+  </div>
+
+  <!-- MONTHLY -->
+  <div class="view" id="view-monthly">
+    <div class="table-wrap">
+      <div class="table-header">
+        <h3 id="monthlyTitle">Aylık Görünüm</h3>
+        <div class="controls">
+          <button onclick="changeMonth(-1)">&#9664; Önceki</button>
+          <button onclick="changeMonth(1)">Sonraki &#9654;</button>
+        </div>
+      </div>
+      <div id="monthlyTable"></div>
+    </div>
+  </div>
+
+  <!-- YEARLY -->
+  <div class="view" id="view-yearly">
+    <div class="table-wrap">
+      <div class="table-header">
+        <h3 id="yearlyTitle">Yıllık Görünüm</h3>
+        <div class="controls">
+          <button onclick="changeYear(-1)">&#9664; Önceki</button>
+          <button onclick="changeYear(1)">Sonraki &#9654;</button>
+        </div>
+      </div>
+      <div id="yearlyTable"></div>
+    </div>
+    <div class="chart-wrap">
+      <h3>Aylık Kâr Dağılımı</h3>
+      <div class="chart" id="yearlyChart"></div>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="view" id="view-history">
+    <div class="table-wrap">
+      <div class="table-header">
+        <h3>Tüm Kayıtlar</h3>
+        <div class="controls">
+          <button onclick="App.sortAsc=!App.sortAsc;renderHistory();updateSortBtn()" id="sortBtn">&#9650; Yeni &rarr; Eski</button>
+        </div>
+      </div>
+      <div id="historyTable"></div>
+    </div>
+  </div>
+</main>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <h3>Satışı Düzenle</h3>
+    <div class="form-group">
+      <label>Tarih</label>
+      <input type="date" id="editDate" readonly style="cursor:not-allowed">
+    </div>
+    <div class="form-group">
+      <label>Nazlı (adet)</label>
+      <input type="number" id="editNazli" min="0">
+    </div>
+    <div class="form-group">
+      <label>Kaltun (adet)</label>
+      <input type="number" id="editKaltun" min="0">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" onclick="closeEditModal()">İptal</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete()">Sil</button>
+      <button class="btn btn-primary btn-sm" onclick="saveEdit()">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+const App = {
+  products: {
+    nazli: { alis: 70, satis: 130, name: 'Nazlı' },
+    kaltun: { alis: 100, satis: 150, name: 'Kaltun' }
+  },
+  sales: {},
+  currentView: 'dashboard',
+  monthlyDate: new Date(),
+  yearlyDate: new Date(),
+  sortAsc: false,
+  editingDate: null,
+  AYLAR: ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'],
+
+  init() {
+    this.loadTheme()
+    this.load()
+    this.setupDateInput()
+    this.updateLiveCalc()
+    this.renderAll()
+    document.getElementById('currentDate').textContent =
+      new Date().toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+    document.getElementById('saleDate').addEventListener('input', () => this.updateLiveCalc())
+    document.getElementById('qtyNazli').addEventListener('input', () => this.updateLiveCalc())
+    document.getElementById('qtyKaltun').addEventListener('input', () => this.updateLiveCalc())
+  },
+
+  load() {
+    try {
+      const d = localStorage.getItem('damacanaSales')
+      this.sales = d ? JSON.parse(d) : {}
+    } catch(e) { this.sales = {} }
+  },
+
+  save() {
+    try { localStorage.setItem('damacanaSales', JSON.stringify(this.sales)) }
+    catch(e) { showToast('Veri kaydedilemedi!', 'error') }
+  },
+
+  setupDateInput() {
+    const d = new Date()
+    document.getElementById('saleDate').value =
+      d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0')
+  },
+
+  // ---- Theme ----
+  loadTheme() {
+    const saved = localStorage.getItem('damacanaTheme') || 'light'
+    document.body.setAttribute('data-theme', saved)
+    document.querySelector('meta[name="theme-color"]').content = saved === 'dark' ? '#0b1120' : '#0e7c8a'
+  },
+
+  toggleTheme() {
+    const current = document.body.getAttribute('data-theme')
+    const next = current === 'dark' ? 'light' : 'dark'
+    document.body.setAttribute('data-theme', next)
+    localStorage.setItem('damacanaTheme', next)
+    document.querySelector('meta[name="theme-color"]').content = next === 'dark' ? '#0b1120' : '#0e7c8a'
+  },
+
+  // ---- Calculations ----
+  calcDay(dateStr) {
+    const s = this.sales[dateStr]
+    if (!s) return { nazli:0, kaltun:0, total:0, revenue:0, cost:0, profit:0 }
+    const n = s.nazli || 0, k = s.kaltun || 0
+    const rev = n * this.products.nazli.satis + k * this.products.kaltun.satis
+    const cost = n * this.products.nazli.alis + k * this.products.kaltun.alis
+    return { nazli:n, kaltun:k, total:n+k, revenue:rev, cost:cost, profit:rev-cost }
+  },
+
+  calcMonth(year, month) {
+    let r = { nazli:0, kaltun:0, total:0, revenue:0, cost:0, profit:0 }
+    const days = new Date(year, month, 0).getDate()
+    for (let d = 1; d <= days; d++) {
+      const key = `${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`
+      const c = this.calcDay(key)
+      r.nazli += c.nazli; r.kaltun += c.kaltun; r.total += c.total
+      r.revenue += c.revenue; r.cost += c.cost; r.profit += c.profit
+    }
+    return r
+  },
+
+  calcYear(year) {
+    let r = { nazli:0, kaltun:0, total:0, revenue:0, cost:0, profit:0 }
+    for (let m = 1; m <= 12; m++) {
+      const c = this.calcMonth(year, m)
+      r.nazli += c.nazli; r.kaltun += c.kaltun; r.total += c.total
+      r.revenue += c.revenue; r.cost += c.cost; r.profit += c.profit
+    }
+    return r
+  },
+
+  getMonthDays(year, month) {
+    return new Date(year, month, 0).getDate()
+  },
+
+  // ---- View ----
+  switchView(view) {
+    this.currentView = view
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'))
+    document.getElementById('view-' + view).classList.add('active')
+    document.querySelectorAll('.nav a, .mobile-nav a').forEach(a => {
+      a.classList.toggle('active', a.dataset.view === view)
+    })
+    const titles = { dashboard:'Dashboard', add:'Satış Ekle', monthly:'Aylık Görünüm', yearly:'Yıllık Görünüm', history:'Geçmiş Kayıtlar' }
+    document.getElementById('viewTitle').textContent = titles[view] || ''
+    document.getElementById('sidebar').classList.remove('open')
+    if (view === 'dashboard') this.renderDashboard()
+    else if (view === 'monthly') this.renderMonthly()
+    else if (view === 'yearly') this.renderYearly()
+    else if (view === 'history') this.renderHistory()
+  },
+
+  toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open')
+  },
+
+  closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open')
+  },
+
+  // ---- Dashboard ----
+  renderDashboard() {
+    const now = new Date()
+    const today = this.formatDate(now)
+    const monthSum = this.calcMonth(now.getFullYear(), now.getMonth() + 1)
+    const yearSum = this.calcYear(now.getFullYear())
+    const todaySum = this.calcDay(today)
+    document.getElementById('dashboardCards').innerHTML = `
+      <div class="card count">
+        <div class="card-icon">📅</div>
+        <div class="label">Bugün (${today})</div>
+        <div class="value">${fmt(todaySum.total)}</div>
+        <div class="sub">Nazlı ${todaySum.nazli} · Kaltun ${todaySum.kaltun} · Ciro ${fmtMoney(todaySum.revenue)}</div>
+      </div>
+      <div class="card revenue">
+        <div class="card-icon">📊</div>
+        <div class="label">Bu Ay (${this.AYLAR[now.getMonth()]})</div>
+        <div class="value">${fmt(monthSum.total)}</div>
+        <div class="sub">Nazlı ${monthSum.nazli} · Kaltun ${monthSum.kaltun} · Ciro ${fmtMoney(monthSum.revenue)}</div>
+      </div>
+      <div class="card profit">
+        <div class="card-icon">💰</div>
+        <div class="label">Bu Yıl (${now.getFullYear()})</div>
+        <div class="value">${fmtMoney(yearSum.profit)}</div>
+        <div class="sub">${yearSum.total} adet · Ciro ${fmtMoney(yearSum.revenue)}</div>
+      </div>
+    `
+    const entries = Object.entries(this.sales).sort((a,b) => b[0].localeCompare(a[0])).slice(0,10)
+    if (!entries.length) {
+      document.getElementById('recentSales').innerHTML =
+        '<div class="empty-state"><div class="empty-icon">📋</div><h4>Henüz satış kaydı yok</h4><p>İlk satışınızı eklemek için "Satış Ekle" bölümüne gidin.</p></div>'
+      return
+    }
+    let html = '<table><thead><tr><th>Tarih</th><th>Nazlı</th><th>Kaltun</th><th>Toplam</th><th class="text-right">Ciro</th><th class="text-right">Kâr</th></tr></thead><tbody>'
+    for (const [date, s] of entries) {
+      const c = this.calcDay(date)
+      html += `<tr style="cursor:pointer" onclick="openEdit('${date}')"><td>${date}</td><td>${c.nazli}</td><td>${c.kaltun}</td><td>${c.total}</td><td class="text-right">${fmtMoney(c.revenue)}</td><td class="text-right text-success">+${fmtMoney(c.profit)}</td></tr>`
+    }
+    html += '</tbody></table>'
+    document.getElementById('recentSales').innerHTML = html
+  },
+
+  // ---- Add ----
+  updateLiveCalc() {
+    const n = parseInt(document.getElementById('qtyNazli').value) || 0
+    const k = parseInt(document.getElementById('qtyKaltun').value) || 0
+    const rev = n * this.products.nazli.satis + k * this.products.kaltun.satis
+    const cost = n * this.products.nazli.alis + k * this.products.kaltun.alis
+    const profit = rev - cost
+    document.getElementById('lcNazli').textContent = n
+    document.getElementById('lcKaltun').textContent = k
+    document.getElementById('lcCiro').textContent = fmtMoney(rev)
+    document.getElementById('lcMaliyet').textContent = fmtMoney(cost)
+    document.getElementById('lcKar').textContent = (profit >= 0 ? '+' : '') + fmtMoney(profit)
+    document.getElementById('lcKar').style.color = profit >= 0 ? 'var(--success)' : 'var(--danger)'
+  },
+
+  saveSale() {
+    const date = document.getElementById('saleDate').value
+    if (!date) { showToast('Lütfen tarih seçin!', 'error'); return }
+    const n = parseInt(document.getElementById('qtyNazli').value) || 0
+    const k = parseInt(document.getElementById('qtyKaltun').value) || 0
+    if (n === 0 && k === 0) { showToast('En az bir adet girin!', 'error'); return }
+    if (this.sales[date]) {
+      if (!confirm(`Bu tarih için kayıt zaten var. Güncellemek istiyor musunuz?\n\nMevcut: Nazlı ${this.sales[date].nazli}, Kaltun ${this.sales[date].kaltun}`)) return
+    }
+    this.sales[date] = { nazli: n, kaltun: k }
+    this.save()
+    this.renderAll()
+    document.getElementById('qtyNazli').value = '0'
+    document.getElementById('qtyKaltun').value = '0'
+    this.updateLiveCalc()
+    this.setupDateInput()
+    showToast(`✔ ${date} — ${n} Nazlı, ${k} Kaltun kaydedildi`, 'success')
+  },
+
+  // ---- Monthly ----
+  renderMonthly() {
+    const y = this.monthlyDate.getFullYear(), m = this.monthlyDate.getMonth() + 1
+    document.getElementById('monthlyTitle').textContent = `${this.AYLAR[m-1]} ${y}`
+    const days = this.getMonthDays(y, m)
+    let html = '<table><thead><tr><th>Gün</th><th>Nazlı</th><th>Kaltun</th><th>Toplam</th><th class="text-right">Ciro</th><th class="text-right">Kâr</th></tr></thead><tbody>'
+    let total = { nazli:0, kaltun:0, total:0, revenue:0, profit:0 }
+    for (let d = 1; d <= days; d++) {
+      const key = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`
+      const c = this.calcDay(key)
+      total.nazli += c.nazli; total.kaltun += c.kaltun; total.total += c.total
+      total.revenue += c.revenue; total.profit += c.profit
+      if (c.total === 0) {
+        html += `<tr><td class="text-muted">${String(d).padStart(2,'0')}</td><td class="text-muted">-</td><td class="text-muted">-</td><td class="text-muted">-</td><td class="text-muted text-right">-</td><td class="text-muted text-right">-</td></tr>`
+      } else {
+        html += `<tr style="cursor:pointer" onclick="openEdit('${key}')"><td>${String(d).padStart(2,'0')}</td><td>${c.nazli}</td><td>${c.kaltun}</td><td>${c.total}</td><td class="text-right">${fmtMoney(c.revenue)}</td><td class="text-right text-success">+${fmtMoney(c.profit)}</td></tr>`
+      }
+    }
+    html += `<tr style="font-weight:700"><td>Toplam</td><td>${total.nazli}</td><td>${total.kaltun}</td><td>${total.total}</td><td class="text-right">${fmtMoney(total.revenue)}</td><td class="text-right text-success">+${fmtMoney(total.profit)}</td></tr>`
+    html += '</tbody></table>'
+    document.getElementById('monthlyTable').innerHTML = html
+  },
+
+  changeMonth(delta) {
+    this.monthlyDate.setMonth(this.monthlyDate.getMonth() + delta)
+    this.renderMonthly()
+  },
+
+  // ---- Yearly ----
+  renderYearly() {
+    const y = this.yearlyDate.getFullYear()
+    document.getElementById('yearlyTitle').textContent = `${y} Yılı`
+    let html = '<table><thead><tr><th>Ay</th><th>Nazlı</th><th>Kaltun</th><th>Toplam</th><th class="text-right">Ciro</th><th class="text-right">Kâr</th></tr></thead><tbody>'
+    let total = { nazli:0, kaltun:0, total:0, revenue:0, profit:0 }
+    const profits = []
+    for (let m = 1; m <= 12; m++) {
+      const c = this.calcMonth(y, m)
+      total.nazli += c.nazli; total.kaltun += c.kaltun; total.total += c.total
+      total.revenue += c.revenue; total.profit += c.profit
+      profits.push(c.profit)
+      if (c.total === 0) {
+        html += `<tr><td class="text-muted">${this.AYLAR[m-1]}</td><td class="text-muted">-</td><td class="text-muted">-</td><td class="text-muted">-</td><td class="text-muted text-right">-</td><td class="text-muted text-right">-</td></tr>`
+      } else {
+        html += `<tr><td>${this.AYLAR[m-1]}</td><td>${c.nazli}</td><td>${c.kaltun}</td><td>${c.total}</td><td class="text-right">${fmtMoney(c.revenue)}</td><td class="text-right text-success">+${fmtMoney(c.profit)}</td></tr>`
+      }
+    }
+    html += `<tr style="font-weight:700"><td>Toplam</td><td>${total.nazli}</td><td>${total.kaltun}</td><td>${total.total}</td><td class="text-right">${fmtMoney(total.revenue)}</td><td class="text-right text-success">+${fmtMoney(total.profit)}</td></tr>`
+    html += '</tbody></table>'
+    document.getElementById('yearlyTable').innerHTML = html
+
+    const maxP = Math.max(...profits, 1)
+    let chartHtml = ''
+    for (let m = 0; m < 12; m++) {
+      const p = profits[m]
+      const pct = p > 0 ? Math.max((p / maxP) * 100, 6) : 6
+      chartHtml += `<div class="bar ${p === 0 ? 'empty' : ''}" style="height:${pct}%">
+        <span class="bar-val">${p > 0 ? fmtMoney(p) : ''}</span>
+        <span class="bar-lbl">${this.AYLAR[m].slice(0,3)}</span>
+      </div>`
+    }
+    document.getElementById('yearlyChart').innerHTML = chartHtml
+  },
+
+  changeYear(delta) {
+    this.yearlyDate.setFullYear(this.yearlyDate.getFullYear() + delta)
+    this.renderYearly()
+  },
+
+  // ---- History ----
+  renderHistory() {
+    const entries = Object.entries(this.sales)
+    if (!entries.length) {
+      document.getElementById('historyTable').innerHTML =
+        '<div class="empty-state"><div class="empty-icon">📋</div><h4>Henüz kayıt yok</h4></div>'
+      return
+    }
+    entries.sort((a,b) => this.sortAsc ? a[0].localeCompare(b[0]) : b[0].localeCompare(a[0]))
+    let html = '<table><thead><tr><th>Tarih</th><th>Nazlı</th><th>Kaltun</th><th>Toplam</th><th class="text-right">Ciro</th><th class="text-right">Kâr</th><th class="text-right" style="width:80px">İşlem</th></tr></thead><tbody>'
+    for (const [date, s] of entries) {
+      const c = this.calcDay(date)
+      html += `<tr>
+        <td>${date}</td><td>${c.nazli}</td><td>${c.kaltun}</td><td>${c.total}</td>
+        <td class="text-right">${fmtMoney(c.revenue)}</td>
+        <td class="text-right text-success">+${fmtMoney(c.profit)}</td>
+        <td class="text-right">
+          <div class="actions">
+            <button class="btn btn-ghost btn-icon" onclick="openEdit('${date}')" title="Düzenle">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="btn btn-ghost btn-icon" onclick="deleteSale('${date}')" title="Sil" style="color:var(--danger)">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+          </div>
+        </td>
+      </tr>`
+    }
+    html += '</tbody></table>'
+    document.getElementById('historyTable').innerHTML = html
+    this.updateSortBtn()
+  },
+
+  updateSortBtn() {
+    document.getElementById('sortBtn').innerHTML = this.sortAsc
+      ? '&#9650; Eski &rarr; Yeni'
+      : '&#9650; Yeni &rarr; Eski'
+  },
+
+  // ---- Edit / Delete ----
+  openEdit(date) {
+    this.editingDate = date
+    const s = this.sales[date]
+    if (!s) return
+    document.getElementById('editDate').value = date
+    document.getElementById('editNazli').value = s.nazli
+    document.getElementById('editKaltun').value = s.kaltun
+    document.getElementById('editModal').classList.add('show')
+  },
+
+  closeEditModal() {
+    document.getElementById('editModal').classList.remove('show')
+    this.editingDate = null
+  },
+
+  saveEdit() {
+    const date = this.editingDate
+    if (!date) return
+    const n = parseInt(document.getElementById('editNazli').value) || 0
+    const k = parseInt(document.getElementById('editKaltun').value) || 0
+    if (n === 0 && k === 0) {
+      if (confirm('Her iki ürün de 0. Kaydı silmek ister misiniz?')) { this.deleteSaleData(date) }
+      return
+    }
+    this.sales[date] = { nazli: n, kaltun: k }
+    this.save()
+    this.closeEditModal()
+    this.renderAll()
+    showToast(`✔ ${date} güncellendi`, 'success')
+  },
+
+  confirmDelete() {
+    const date = this.editingDate
+    if (!date) return
+    if (confirm(`${date} kaydını silmek istediğinize emin misiniz?`)) { this.deleteSaleData(date) }
+  },
+
+  deleteSaleData(date) {
+    delete this.sales[date]
+    this.save()
+    this.closeEditModal()
+    this.renderAll()
+    showToast(`🗑 ${date} silindi`, 'success')
+  },
+
+  deleteSale(date) {
+    if (confirm(`${date} kaydını silmek istediğinize emin misiniz?`)) { this.deleteSaleData(date) }
+  },
+
+  renderAll() {
+    this.renderDashboard()
+    this.renderMonthly()
+    this.renderYearly()
+    this.renderHistory()
+  },
+
+  formatDate(d) {
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0')
+  }
+}
+
+// ---- Globals ----
+function fmt(n) { return Number(n).toLocaleString('tr-TR') }
+function fmtMoney(n) { return Number(n).toLocaleString('tr-TR') + '₺' }
+function switchView(v) { App.switchView(v) }
+function adjustQty(p,d) {
+  const el = document.getElementById(p === 'nazli' ? 'qtyNazli' : 'qtyKaltun')
+  let v = parseInt(el.value) || 0
+  el.value = Math.max(0, v + d)
+  App.updateLiveCalc()
+}
+function saveSale() { App.saveSale() }
+function changeMonth(d) { App.changeMonth(d) }
+function changeYear(d) { App.changeYear(d) }
+function openEdit(d) { App.openEdit(d) }
+function deleteSale(d) { App.deleteSale(d) }
+function closeEditModal() { App.closeEditModal() }
+function saveEdit() { App.saveEdit() }
+function confirmDelete() { App.confirmDelete() }
+function renderHistory() { App.renderHistory() }
+function updateSortBtn() { App.updateSortBtn() }
+
+function showToast(msg, type) {
+  const c = document.getElementById('toastContainer')
+  const t = document.createElement('div')
+  t.className = 'toast ' + (type === 'success' ? 'success' : type === 'error' ? 'error' : '')
+  t.innerHTML = `<span>${msg}</span><button class="toast-close" onclick="this.parentElement.remove()">&#10005;</button>`
+  c.appendChild(t)
+  setTimeout(() => { if (t.parentElement) t.remove() }, 4000)
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  App.init()
+  document.querySelector('.main').addEventListener('click', () => App.closeSidebar())
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {})
+  }
+})
+</script>
+</body>
+</html>
